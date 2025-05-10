@@ -1,4 +1,7 @@
+using Application.Services;
+using Domain.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +27,16 @@ connection.Open();
 }
 
 builder.Services.AddDbContext<ApplicationContext>(dbContextOptions => dbContextOptions.UseSqlite(connection));
+
+
+
+// Dependency injection
+#region  
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+#endregion
+
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
