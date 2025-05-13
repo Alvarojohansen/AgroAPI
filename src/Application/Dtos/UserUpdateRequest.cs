@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos
 {
-    public class UserDtosRequest
+    public class UserUpdateRequest
 
     {
         public string? Name { get; set; }

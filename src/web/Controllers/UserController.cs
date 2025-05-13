@@ -17,18 +17,39 @@ namespace web.Controllers
         {
             return Ok(_service.GetAllUser());
         }
-        [HttpGet("{name}")]
-        public IActionResult Get( string name)
+        [HttpGet("{Id}")]
+        public IActionResult Get( int Id)
         {
-            return Ok(_service.Get(name));
+            return Ok(_service.Get(Id));
         }
 
         [HttpPost("postUser/")]
-        
-        public IActionResult AddNewUser([FromBody] UserDtosRequest body) 
+        public IActionResult AddNewUser([FromBody] UserRequest body) 
         {
             return Ok(_service.AddUser(body));
         }
+
+        [HttpPut("updateUser/{id}")]
+        public IActionResult UpdateUser([FromRoute]int id, [FromBody] UserUpdateRequest user) 
+        {
+            _service.UpdateUser(id, user);
+            return Ok("Usuario actualizado correctamente.");
+
+        }
+
+        [HttpDelete("deleteUser/{id}")]
+        public IActionResult DeleteUser([FromRoute] int id) 
+        {
+            var user = _service.Get(id);
+            if (user == null) 
+            {
+                return NotFound();
+
+            }
+            _service.DeleteUser(id);
+            return Ok();
+        }
+
         
     }
 }
