@@ -1,5 +1,6 @@
 ﻿using Application.Dtos;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,12 @@ namespace Application.Services
         {
             _repository = repository;
         }
+
+        public BaseResponse ValidationUser(string email, string password)
+        {
+            BaseResponse response = new BaseResponse();
+
+        }
         public List<User> GetAllUser()
         {
             return _repository.GetAllUser();
@@ -39,8 +46,10 @@ namespace Application.Services
                 Email =request.Email,
                 Password =request.Password,
                 Address =request.Address,
+                City = request.City,
                 Country =request.Country,
                 Phone =request.Phone,
+                Role = UserRole.Client
             };
             return _repository.AddUser(user);
         }
@@ -54,6 +63,7 @@ namespace Application.Services
                 userUpdate.Email = request.Email;
                 userUpdate.Password = request.Password;
                 userUpdate.Address = request.Address;
+                userUpdate.City = request.City;
                 userUpdate.Country = request.Country;
                 userUpdate.Phone = request.Phone;
 
