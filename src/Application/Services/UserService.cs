@@ -22,15 +22,34 @@ namespace Application.Services
             _repository = repository;
         }
 
-        public BaseResponse ValidationUser(string email, string password)
+        public UserModel ValidationCredentials(CredentialsRequest credentials)
         {
-            BaseResponse response = new BaseResponse();
+            User? user = GetUserbyEmail(credentials.Email);
+            if (user.Password == credentials.Password)
+            {
+                return new UserModel()
+                {
+                    Email = user.Email,
+                    Id = user.Id,
+                    Name = user.Name,
+                    Address = user.Address,
+                    Phone = user.Phone,
+                    City = user.City,
+                    Country = user.Country
+                };
+            }else return null;
 
         }
+
+         
         public List<User> GetAllUser()
         {
             return _repository.GetAllUser();
 
+        }
+        public User GetUserbyEmail(string email)
+        {
+            return _repository.GetByEmail(email);
         }
 
         public User Get(int Id) 

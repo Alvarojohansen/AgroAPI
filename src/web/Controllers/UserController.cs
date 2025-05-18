@@ -17,6 +17,12 @@ namespace web.Controllers
         {
             return Ok(_service.GetAllUser());
         }
+        [HttpGet("{email}")]
+        public IActionResult GetByEmail(string email)
+        {
+            return Ok(_service.GetUserbyEmail(email));
+        }
+
         [HttpGet("{Id}")]
         public IActionResult Get( int Id)
         {

@@ -57,6 +57,8 @@ builder.Services.AddDbContext<ApplicationContext>(dbContextOptions => dbContextO
 #region  
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ProductService>();
 
 #endregion
 

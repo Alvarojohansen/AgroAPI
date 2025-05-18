@@ -22,6 +22,10 @@ namespace Infrastructure.Repositories
         {
             return _context.Users.ToList();
         }
+        public User GetByEmail(string Email)
+        {
+            return _context.Users.Find(Email);
+        }
         public User? Get(int Id)
         {
             return _context.Users.Find(Id);
