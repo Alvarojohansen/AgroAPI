@@ -35,15 +35,14 @@ builder.Services.AddSwaggerGen(setupAction =>
                     Id = "AgroApiBearerAuth" } //Tiene que coincidir con el id seteado arriba en la definición
                 }, new List<string>() }
     });
-}); ;
+});
 
-
-//Configure the SQLite connection
+// Configure the SQLite connection
 
 var connection = new SqliteConnection("Data Source=AgroAPIDatabase.db");
 connection.Open();
-//Set journal mode to DELETE using PARMA statement
- using(var command = connection.CreateCommand())
+// Set journal mode to DELETE using PRAGMA statement
+using (var command = connection.CreateCommand())
 {
     command.CommandText = "PRAGMA journal_mode = DELETE;";
     command.ExecuteNonQuery();
@@ -51,33 +50,31 @@ connection.Open();
 
 builder.Services.AddDbContext<ApplicationContext>(dbContextOptions => dbContextOptions.UseSqlite(connection));
 
-
-
 // Dependency injection
 #region  
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ProductService>();
-
 #endregion
 
-builder.Services.AddAuthentication("Bearer") //"Bearer" es el tipo de auntenticación que tenemos que elegir después en PostMan para pasarle el token
-    .AddJwtBearer(options => //Acá definimos la configuración de la autenticación. le decimos qué cosas queremos comprobar. La fecha de expiración se valida por defecto.
+builder.Services.AddAuthentication("Bearer")
+    .AddJwtBearer("Bearer", options =>
     {
-        options.TokenValidationParameters = new()
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Authentication:Issuer"],
-            ValidAudience = builder.Configuration["Authentication:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration["Authentication:SecretForKey"]))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes("AgroApiSecretKey")),
+            ValidateIssuer = false,
+            ValidateAudience = false
         };
-    }
-);
+    });
 
-var app = builder.Build();
+var app = builder.Build(); // Moved this line up to ensure 'app' is declared before usage
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

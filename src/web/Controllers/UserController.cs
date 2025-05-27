@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.User;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,11 +12,13 @@ namespace web.Controllers
         {
             _service = service;
         }
+
         [HttpGet]
         public IActionResult GetAllUser() 
         {
             return Ok(_service.GetAllUser());
         }
+
         [HttpGet("{email}")]
         public IActionResult GetByEmail(string email)
         {
@@ -38,8 +40,10 @@ namespace web.Controllers
         [HttpPut("updateUser/{id}")]
         public IActionResult UpdateUser([FromRoute]int id, [FromBody] UserUpdateRequest user) 
         {
-            _service.UpdateUser(id, user);
-            return Ok("Usuario actualizado correctamente.");
+            var updated = _service.UpdateUser(id, user);
+            if (!updated)
+                return NotFound($"No se encontró un usuario con ID {id}");
+            return Ok("User updated successfully.");
 
         }
 

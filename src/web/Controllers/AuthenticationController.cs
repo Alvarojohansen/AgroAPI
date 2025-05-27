@@ -1,6 +1,10 @@
 ﻿using Application.Dtos;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace web.Controllers
 {
@@ -13,15 +17,16 @@ namespace web.Controllers
         {
             _userService = userService;
         }
-        [HttpPost]
+        [HttpPost("authenticate")]
         public IActionResult Authenticate([FromBody] CredentialsRequest credentials)
         {
-            UserModel? userLogged = _userService.ValidationCredentials(credentials);
-            if (userLogged == null) 
+            var userLogged = _userService.ValidationCredentials(credentials);
+            if (userLogged == null)
             {
-                return Ok("jwt");
-            }return Unauthorized();
-            
+                return Unauthorized();
+            }
+            return Ok(userLogged);
+
         }
     }
 }

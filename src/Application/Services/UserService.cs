@@ -1,4 +1,5 @@
 ﻿using Application.Dtos;
+using Application.Dtos.User;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Interfaces;
@@ -22,6 +23,8 @@ namespace Application.Services
             _repository = repository;
         }
 
+
+        // Esto es para JWT (tempralmente permanecera aqui, luego lo cambiare.)
         public UserModel ValidationCredentials(CredentialsRequest credentials)
         {
             User? user = GetUserbyEmail(credentials.Email);
@@ -35,7 +38,8 @@ namespace Application.Services
                     Address = user.Address,
                     Phone = user.Phone,
                     City = user.City,
-                    Country = user.Country
+                    Country = user.Country,
+                    Role = user.Role
                 };
             }else return null;
 
@@ -73,7 +77,7 @@ namespace Application.Services
             return _repository.AddUser(user);
         }
 
-        public void UpdateUser(int id, UserUpdateRequest request) 
+        public bool UpdateUser(int id, UserUpdateRequest request) 
         {
             var userUpdate = _repository.Get(id);
             if (userUpdate != null)
@@ -87,8 +91,10 @@ namespace Application.Services
                 userUpdate.Phone = request.Phone;
 
                 _repository.UpdateUser(userUpdate);
+                return true;
             }
-            
+            return false;
+
         }
 
         public void DeleteUser(int id) 

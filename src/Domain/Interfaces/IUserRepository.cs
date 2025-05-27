@@ -11,9 +11,10 @@ namespace Domain.Interfaces
     {
 
         User? Get(int Id);
+        User? GetByEmail(string Email);
         List<User> GetAllUser();
         int AddUser (User user);
-        void UpdateUser(User userUpdate);
+        bool UpdateUser(User userUpdate);
         void DeleteUser (int id);
     }
 }

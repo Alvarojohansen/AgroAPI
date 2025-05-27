@@ -37,11 +37,11 @@ namespace Infrastructure.Repositories
             _context.SaveChanges();
             return user.Id;
         }
-        public void UpdateUser( User user) 
+        public bool UpdateUser( User user) 
         {
             _context.Entry(user).State = EntityState.Modified;
             _context.SaveChanges();
-            return;
+            return true;
         }
 
         public void DeleteUser(int Id) 
