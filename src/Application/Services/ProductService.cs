@@ -37,7 +37,8 @@ namespace Application.Services
                 Name = request.Name,
                 Description = request.Description,
                 Category = request.Category,
-                Price = request.Price
+                Price = request.Price,
+                stock = request.Stock
 
             };
             return _repository.AddProduct(product);

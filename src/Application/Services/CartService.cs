@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Application.Services
 {
-    public class Client : User
+    internal class CartService
     {
-
-        public int Purchases { get; set; }
     }
 }

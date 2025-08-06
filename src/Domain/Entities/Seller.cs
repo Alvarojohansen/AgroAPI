@@ -9,6 +9,7 @@ namespace Domain.Entities
     public class Seller : User
     {
 
-        
+         List<Product> Products { get; set; } = new List<Product>();
+         
     }
 }

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Infrastructure.Repositories
 {
-    public class Client : User
+    internal class CartRepository
     {
-
-        public int Purchases { get; set; }
     }
 }
