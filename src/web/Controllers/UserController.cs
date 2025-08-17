@@ -1,10 +1,13 @@
 ﻿using Application.Dtos.User;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace web.Controllers
 {
+    
     [Route("api/[controller]")]
+    [ApiController]
     public class UserController : Controller
     {
         private readonly UserService _service;
@@ -12,19 +15,19 @@ namespace web.Controllers
         {
             _service = service;
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult GetAllUser() 
         {
             return Ok(_service.GetAllUser());
         }
-
+        [Authorize]
         [HttpGet("{email}")]
         public IActionResult GetByEmail(string email)
         {
             return Ok(_service.GetUserbyEmail(email));
         }
-
+        [Authorize]
         [HttpGet("{Id}")]
         public IActionResult Get( int Id)
         {
@@ -36,7 +39,7 @@ namespace web.Controllers
         {
             return Ok(_service.AddUser(body));
         }
-
+        [Authorize]
         [HttpPut("updateUser/{id}")]
         public IActionResult UpdateUser([FromRoute]int id, [FromBody] UserUpdateRequest user) 
         {
@@ -46,7 +49,7 @@ namespace web.Controllers
             return Ok("User updated successfully.");
 
         }
-
+        [Authorize]
         [HttpDelete("deleteUser/{id}")]
         public IActionResult DeleteUser([FromRoute] int id) 
         {

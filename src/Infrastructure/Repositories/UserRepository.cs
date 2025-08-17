@@ -22,9 +22,9 @@ namespace Infrastructure.Repositories
         {
             return _context.Users.ToList();
         }
-        public User GetByEmail(string Email)
+        public User GetByEmail(string email)
         {
-            return _context.Users.Find(Email);
+            return _context.Users.FirstOrDefault(u => u.Email == email);
         }
         public User? Get(int Id)
         {

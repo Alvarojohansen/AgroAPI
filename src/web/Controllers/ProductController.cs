@@ -1,9 +1,12 @@
 ﻿using Application.Dtos.Product;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace web.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : Controller
@@ -14,11 +17,22 @@ namespace web.Controllers
             _productService = productService;
         }
 
+        private bool IsUserInRole(string role)
+        {
+            var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role); // Obtener el claim de rol, si existe
+            return roleClaim != null && roleClaim.Value == role; //Verificar si el claim existe y su valor es "role"
+        }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_productService.GetAllProducts());
+            if (IsUserInRole("Admin") || (IsUserInRole("Client")))
+            {
+                var products = _productService.GetAllProducts();
+                return Ok(products);
+            }
+            return Forbid();
+
         }
 
         [HttpGet("{id}")]
@@ -48,8 +62,9 @@ namespace web.Controllers
             if (!updated)
                 return NotFound($"No se encontró un producto con ID {id}");
 
-            return Ok("Product updated successfully.");
+            return Ok(updated);
         }
+        
 
         [HttpDelete("deleteProduct/{id}")]
         public IActionResult DeleteProduct([FromRoute] int id)

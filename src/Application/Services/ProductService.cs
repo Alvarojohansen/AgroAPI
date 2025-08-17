@@ -52,6 +52,7 @@ namespace Application.Services
                 product.Description = request.Description;
                 product.Category = request.Category;
                 product.Price = request.Price;
+                product.stock = request.stock;
 
                 _repository.UpdateProduct(product);
                 return true;

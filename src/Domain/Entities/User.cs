@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Domain.Entities
@@ -26,8 +27,7 @@ namespace Domain.Entities
         public string? City { get; set; }
         public string? Phone { get; set; }
 
-
-
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public UserRole Role { get; set; }
 
     }

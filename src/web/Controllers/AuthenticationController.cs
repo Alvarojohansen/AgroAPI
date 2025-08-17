@@ -1,5 +1,7 @@
 ﻿using Application.Dtos;
 using Application.Services;
+using Application.Services.ThirdsServices;
+using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -12,21 +14,27 @@ namespace web.Controllers
     [ApiController]
     public class AuthenticationController : Controller
     {
-        private readonly UserService _userService;
-        public AuthenticationController(UserService userService)
-        {
-            _userService = userService;
-        }
-        [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] CredentialsRequest credentials)
-        {
-            var userLogged = _userService.ValidationCredentials(credentials);
-            if (userLogged == null)
-            {
-                return Unauthorized();
-            }
-            return Ok(userLogged);
+        private readonly IConfiguration _config;
+        private readonly IAuthenticationService _customAuthenticationService;
 
+        public AuthenticationController(IConfiguration config, IAuthenticationService authenticateService)
+        {
+            _config = config;
+            _customAuthenticationService = authenticateService;
+        }
+
+        [HttpPost("authenticate")]
+        public ActionResult<string> Authenticate([FromBody] CredentialsRequest credentials)
+        {
+            try
+            {
+                string token = _customAuthenticationService.Authenticate(credentials);
+                return Ok(token);
+            }
+            catch (InvalidOperationException)
+            {
+                return Unauthorized(new { message = "Credenciales inválidas. Por favor, verifica tu email y contraseña." });
+            }
         }
     }
 }
