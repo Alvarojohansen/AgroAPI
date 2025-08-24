@@ -27,8 +27,6 @@ namespace Application.Services.ThirdsServices
         {
             _userRepository = userRepository;
             _options = options.Value;
-
-
         }
 
         private User? ValidateUser(CredentialsRequest credentialsRequest)

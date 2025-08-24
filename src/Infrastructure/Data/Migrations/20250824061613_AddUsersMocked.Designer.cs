@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250824061613_AddUsersMocked")]
+    partial class AddUsersMocked
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -154,6 +157,9 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.HasBaseType("Domain.Entities.User");
 
+                    b.Property<DateTime?>("JoinedOn")
+                        .HasColumnType("TEXT");
+
                     b.HasDiscriminator().HasValue("Admin");
 
                     b.HasData(
@@ -168,7 +174,8 @@ namespace Infrastructure.Data.Migrations
                             Name = "Andrés ",
                             Password = "admin123",
                             Phone = "351222333",
-                            Role = "Admin"
+                            Role = "Admin",
+                            JoinedOn = new DateTime(2025, 8, 24, 3, 16, 12, 932, DateTimeKind.Local).AddTicks(5081)
                         });
                 });
 
@@ -176,7 +183,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.HasBaseType("Domain.Entities.User");
 
-                    b.Property<int?>("Purchases")
+                    b.Property<int>("Purchases")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("Client");
@@ -193,7 +200,8 @@ namespace Infrastructure.Data.Migrations
                             Name = "Carlos Cliente",
                             Password = "client123",
                             Phone = "3415551111",
-                            Role = "Client"
+                            Role = "Client",
+                            Purchases = 0
                         },
                         new
                         {
@@ -205,7 +213,8 @@ namespace Infrastructure.Data.Migrations
                             Name = "Sandra ",
                             Password = "seller123",
                             Phone = "113334444",
-                            Role = "Client"
+                            Role = "Client",
+                            Purchases = 0
                         });
                 });
 
@@ -214,6 +223,7 @@ namespace Infrastructure.Data.Migrations
                     b.HasBaseType("Domain.Entities.User");
 
                     b.Property<string>("BankAccount")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("Seller");

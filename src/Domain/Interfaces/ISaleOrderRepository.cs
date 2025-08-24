@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Domain.Interfaces
 {
-    public class Client : User
+    public class ISaleOrderRepository
     {
-
-        public int? Purchases { get; set; }
     }
 }

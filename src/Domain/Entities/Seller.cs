@@ -8,8 +8,8 @@ namespace Domain.Entities
 {
     public class Seller : User
     {
-
-         List<Product> Products { get; set; } = new List<Product>();
+        public string? BankAccount { get; set; } = string.Empty;
+        public ICollection<Product>? Products { get; set; } = new List<Product>();
          
     }
 }

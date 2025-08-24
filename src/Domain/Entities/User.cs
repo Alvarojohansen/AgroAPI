@@ -30,5 +30,6 @@ namespace Domain.Entities
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public UserRole Role { get; set; }
 
+        public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
     }
 }

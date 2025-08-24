@@ -3,6 +3,7 @@ using System;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20250824061025_AddUsers2")]
+    partial class AddUsers2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.8");
@@ -154,59 +157,20 @@ namespace Infrastructure.Data.Migrations
                 {
                     b.HasBaseType("Domain.Entities.User");
 
-                    b.HasDiscriminator().HasValue("Admin");
+                    b.Property<DateTime?>("JoinedOn")
+                        .HasColumnType("TEXT");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 4,
-                            Address = "Calle Central 9",
-                            Apartment = "2B",
-                            City = "Córdoba",
-                            Country = "Argentina",
-                            Email = "andres@example.com",
-                            Name = "Andrés ",
-                            Password = "admin123",
-                            Phone = "351222333",
-                            Role = "Admin"
-                        });
+                    b.HasDiscriminator().HasValue("Admin");
                 });
 
             modelBuilder.Entity("Domain.Entities.Client", b =>
                 {
                     b.HasBaseType("Domain.Entities.User");
 
-                    b.Property<int?>("Purchases")
+                    b.Property<int>("Purchases")
                         .HasColumnType("INTEGER");
 
                     b.HasDiscriminator().HasValue("Client");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "Av. Siempre Viva 123",
-                            Apartment = "1A",
-                            City = "Rosario",
-                            Country = "Argentina",
-                            Email = "carlos@example.com",
-                            Name = "Carlos Cliente",
-                            Password = "client123",
-                            Phone = "3415551111",
-                            Role = "Client"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Address = "Calle Comercio 45",
-                            City = "Buenos Aires",
-                            Country = "Argentina",
-                            Email = "sandra@example.com",
-                            Name = "Sandra ",
-                            Password = "seller123",
-                            Phone = "113334444",
-                            Role = "Client"
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Seller", b =>
@@ -214,25 +178,10 @@ namespace Infrastructure.Data.Migrations
                     b.HasBaseType("Domain.Entities.User");
 
                     b.Property<string>("BankAccount")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("Seller");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 5,
-                            Address = "Calle Central 9",
-                            Apartment = "2B",
-                            City = "Córdoba",
-                            Country = "Argentina",
-                            Email = "andres@example.com",
-                            Name = "juan ",
-                            Password = "seller123",
-                            Phone = "351222333",
-                            Role = "Seller",
-                            BankAccount = ""
-                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>

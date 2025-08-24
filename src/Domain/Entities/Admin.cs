@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public class Client : User
+    public class Admin : User
     {
-
-        public int? Purchases { get; set; }
+        
     }
 }

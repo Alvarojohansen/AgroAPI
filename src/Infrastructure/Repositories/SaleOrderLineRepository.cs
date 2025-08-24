@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.Entities
+namespace Infrastructure.Repositories
 {
-    public class Client : User
+    public class SaleOrderLineRepository
     {
-
-        public int? Purchases { get; set; }
     }
 }
