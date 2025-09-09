@@ -1,5 +1,6 @@
 ﻿using Application.Dtos;
 using Application.Dtos.User;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Interfaces;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IUserRepository _repository;
         public UserService(IUserRepository repository)
@@ -75,6 +76,17 @@ namespace Application.Services
                 Role = UserRole.Client
             };
             return _repository.AddUser(user);
+        }
+        public bool UpdateRoleUser(int id, UserUpdateRoleRequest request) 
+        {
+            var userUpdate = _repository.Get(id);
+            if (userUpdate != null) 
+            {
+                userUpdate.Role = request.Role;
+                _repository.UpdateUser(userUpdate);
+                return true;
+            }
+            return false;
         }
 
         public bool UpdateUser(int id, UserUpdateRequest request) 

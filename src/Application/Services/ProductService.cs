@@ -1,5 +1,6 @@
 ﻿using Application.Dtos.Product;
 using Application.Dtos.User;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enum;
 using Domain.Interfaces;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Application.Services
 {
-    public class ProductService
+    public class ProductService : IProductService
     {
         private readonly IProductRepository _repository;
         public ProductService(IProductRepository repository)

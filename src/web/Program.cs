@@ -1,3 +1,4 @@
+using Application.Interfaces;
 using Application.Services;
 using Application.Services.ThirdsServices;
 using Domain.Interfaces;
@@ -54,10 +55,13 @@ builder.Services.Configure<AuthenticateServiceOptions>(
     builder.Configuration.GetSection(AuthenticateServiceOptions.AuthenticateService));
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<IProductService,ProductService>();
+builder.Services.AddScoped<SaleOrderService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ISaleOrderRepository, SaleOrderRepository>();
+
 
 // JWT
 var key = Encoding.ASCII.GetBytes("AgroApiSecretKey");

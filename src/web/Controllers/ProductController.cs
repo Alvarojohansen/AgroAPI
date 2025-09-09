@@ -1,4 +1,5 @@
 ﻿using Application.Dtos.Product;
+using Application.Interfaces;
 using Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,8 +12,8 @@ namespace web.Controllers
     [ApiController]
     public class ProductController : Controller
     {
-        private readonly ProductService _productService;
-        public ProductController(ProductService productService)
+        private readonly IProductService _productService;
+        public ProductController(IProductService productService)
         {
             _productService = productService;
         }

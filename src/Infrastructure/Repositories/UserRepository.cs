@@ -1,5 +1,6 @@
 ﻿using Application.Dtos;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Interfaces;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +38,7 @@ namespace Infrastructure.Repositories
             _context.SaveChanges();
             return user.Id;
         }
+        
         public bool UpdateUser( User user) 
         {
             _context.Entry(user).State = EntityState.Modified;
