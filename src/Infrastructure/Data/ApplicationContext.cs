@@ -19,8 +19,7 @@ namespace Infrastructure.Data
 
         //Acá estamos llamando al constructor de DbContext que es el que acepta las opciones
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
-        {
-            
+        {            
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -49,7 +48,7 @@ namespace Infrastructure.Data
             // Relación entre OrdenDeVenta y LineaDeVenta (uno a muchos)
             modelBuilder.Entity<SaleOrder>()
                 .HasMany(o => o.SaleOrderLines)
-                .WithOne()
+                .WithOne(l => l.SaleOrder)
                 .HasForeignKey(l => l.SaleOrderId);
 
             modelBuilder.Entity<SaleOrderLine>()

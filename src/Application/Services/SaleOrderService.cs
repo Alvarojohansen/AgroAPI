@@ -12,45 +12,54 @@ namespace Application.Services
 {
     public class SaleOrderService : ISaleOrderService
     {
-      private readonly ISaleOrderRepository _repository;
-        public SaleOrderService(ISaleOrderRepository repository)
-        {
+        private readonly ISaleOrderRepository _repository;
+        private readonly ICurrentUserService _currentUser;
+
+        public SaleOrderService(ISaleOrderRepository repository, ICurrentUserService currentUser)
+        {            
             _repository = repository;
+            _currentUser = currentUser;
         }
         public List<SaleOrder> GetSaleOrders()
         {
             return _repository.GetSaleOrders();
         }
+        public SaleOrder? GetSaleOrderById(int id)
+        {
+            return _repository.GetSaleOrderById(id);
+        }
 
         public List<SaleOrder> GetSaleOrdersByClientId(int clientId)
         {
-            var saleOrders = _repository.GetSaleOrders();
-            return saleOrders.Where(so => so.ClientId == clientId).ToList();
+            
+            return _repository.GetSaleOrderByClientId(clientId);
         }
         public List<SaleOrder> GetSaleOrdersBySellerId(int sellerId)
         {
-            var saleOrders = _repository.GetSaleOrders();
-            return saleOrders.Where(so => so.SellerId == sellerId).ToList();
+           
+            return _repository.GetSaleOrderBySellerId(sellerId);
         }
 
         public SaleOrder AddSaleOrder(SaleOrderDto saleOrder)
         {
+            var clientId = _currentUser.ClientId
+                ?? throw new UnauthorizedAccessException("Usuario no autenticado");
+
             var newSaleOrder = new SaleOrder
             {
                 OrderCode = saleOrder.OrderCode,
-                Date = saleOrder.Date,
+                Date = DateTime.Now,
                 Total = saleOrder.Total,
-                ClientId = saleOrder.ClientId,
+                ClientId = clientId,
                 SellerId = saleOrder.SellerId,
                 SaleOrderLines = saleOrder.SaleOrderLines
-                .Select(lineDto => new SaleOrderLine
-                 {
-                     ProductId = lineDto.ProductId,
-                     Quantity = lineDto.Quantity
-                     
-
-                }).ToList()
+                    .Select(lineDto => new SaleOrderLine
+                    {
+                        ProductId = lineDto.ProductId,
+                        Quantity = lineDto.Quantity
+                    }).ToList()
             };
+
             return _repository.AddSaleOrder(newSaleOrder);
         }
 

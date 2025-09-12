@@ -7,6 +7,7 @@ using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,10 +17,13 @@ namespace Application.Services
     public class ProductService : IProductService
     {
         private readonly IProductRepository _repository;
-        public ProductService(IProductRepository repository)
+        private readonly ICurrentUserService _currentUser;
+        public ProductService(IProductRepository repository, ICurrentUserService currentUser)
         {
             _repository = repository;
+            _currentUser = currentUser;
         }
+       
 
         public List<Product> GetAllProducts()
         {
@@ -33,16 +37,25 @@ namespace Application.Services
         }
         public Product AddProduct(ProductRequest request)
         {
-            var product = new Product()
+            // Obtengo el ID del vendedor desde el servicio de usuario actual
+            var sellerId = _currentUser.SellerId
+                           ?? throw new UnauthorizedAccessException("Usuario no autenticado");
+            var Name = _currentUser.Name
+                           ?? throw new UnauthorizedAccessException("Usuario no autenticado");
+
+            var product = new Product
             {
                 Name = request.Name,
                 Description = request.Description,
                 Category = request.Category,
                 Price = request.Price,
-                stock = request.Stock
-
+                stock = request.Stock,
+                SellerId = sellerId    
+               
             };
+           
             return _repository.AddProduct(product);
+            
         }
         public bool UpdateProduct(int id, ProductUpdateRequest request)
         {

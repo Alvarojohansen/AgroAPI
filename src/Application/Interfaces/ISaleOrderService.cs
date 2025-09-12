@@ -11,6 +11,7 @@ namespace Application.Interfaces
     public interface ISaleOrderService
     {
         List<SaleOrder> GetSaleOrders();
+        SaleOrder? GetSaleOrderById(int id);
         List<SaleOrder> GetSaleOrdersByClientId(int clientId);
         List<SaleOrder> GetSaleOrdersBySellerId(int sellerId);
         SaleOrder AddSaleOrder(SaleOrderDto saleOrder);

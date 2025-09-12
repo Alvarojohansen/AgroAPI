@@ -23,17 +23,13 @@ namespace web.Controllers
             var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role); // Obtener el claim de rol, si existe
             return roleClaim != null && roleClaim.Value == role; //Verificar si el claim existe y su valor es "role"
         }
+        
 
         [HttpGet]
         public IActionResult GetAll()
-        {
-            if (IsUserInRole("Admin") || (IsUserInRole("Client")))
-            {
+        {          
                 var products = _productService.GetAllProducts();
                 return Ok(products);
-            }
-            return Forbid();
-
         }
 
         [HttpGet("{id}")]
@@ -45,38 +41,49 @@ namespace web.Controllers
         [HttpPost("/addProduct")]
         public IActionResult AddProduct([FromBody] ProductRequest product)
         {
-            if (product == null)
+            if ( IsUserInRole("Seller"))
             {
-                return BadRequest("Product cannot be null");
+                if (product == null)
+                {
+                    return BadRequest("Product cannot be null");
+                }
+                return Ok(_productService.AddProduct(product));
             }
-            // Assuming you have a method to add a product in your service
-            return Ok(_productService.AddProduct(product));
+            
+            return Forbid();
 
         }
 
         [HttpPut("updateProduct/{id}")]
         public IActionResult UpdateProduct([FromRoute] int id, [FromBody] ProductUpdateRequest product)
         {
+            if (IsUserInRole("Admin") || (IsUserInRole("Seller")))
+            {
+                var updated = _productService.UpdateProduct(id, product);
 
-            var updated = _productService.UpdateProduct(id, product);
+                if (!updated)
+                    return NotFound($"No se encontró un producto con ID {id}");
 
-            if (!updated)
-                return NotFound($"No se encontró un producto con ID {id}");
-
-            return Ok(updated);
+                return Ok(updated);
+            }
+            return Forbid();
         }
         
 
         [HttpDelete("deleteProduct/{id}")]
         public IActionResult DeleteProduct([FromRoute] int id)
         {
-            var product = _productService.GetProductById(id);
-            if (product == null)
+            if (IsUserInRole("Admin") || (IsUserInRole("Seller")))
             {
-                return NotFound($"No se encontró un producto con ID {id}");
+                var product = _productService.GetProductById(id);
+                if (product == null)
+                {
+                    return NotFound($"No se encontró un producto con ID {id}");
+                }
+                _productService.DeleteProduct(id);
+                return Ok("Product deleted successfully.");
             }
-            _productService.DeleteProduct(id);
-            return Ok("Product deleted successfully.");
+            return Forbid();
         }
     }
 }

@@ -44,8 +44,17 @@ namespace web.Controllers
             var saleOrders = _saleOrderService.GetSaleOrders();
             return Ok(saleOrders);
         }
-        
-        [HttpGet("{clientId}")]
+        [HttpGet("GetSaleOrder/{id}")]
+        public IActionResult GetSaleOrderById([FromRoute] int id)
+        {
+            var saleOrder = _saleOrderService.GetSaleOrderById(id);
+            if (saleOrder == null)
+                return NotFound($"No se encontró una orden de venta con ID {id}");
+
+            return Ok(saleOrder);
+        }
+
+        [HttpGet("client/{clientId}")]
         public IActionResult GetAllByClientId([FromRoute]int clientId)
         {
             var userId = GetUserId();
@@ -58,7 +67,7 @@ namespace web.Controllers
             }
             return BadRequest("El Id del cliente no es valido.");
         }
-        [HttpGet("{sellerId}")]
+        [HttpGet("seller/{sellerId}")]
         public IActionResult GetAllBySellerId([FromRoute] int sellerId)
         {
             var userId = GetUserId();
@@ -79,34 +88,43 @@ namespace web.Controllers
             {
                 return BadRequest("Sale order cannot be null");
             }
+
             var userId = GetUserId();
             if (userId == null) return Forbid();
-            if ((IsUserInRole("Client") && userId == saleOrder.ClientId))
+
+            if (IsUserInRole("Client") && userId == saleOrder.ClientId)
             {
                 var createdSaleOrder = _saleOrderService.AddSaleOrder(saleOrder);
-                return Ok(createdSaleOrder);
+                
+                return Ok(createdSaleOrder.Id);
             }
-            return BadRequest("El Id del cliente no es valido.");
+
+            return BadRequest("CLientId invalid.");
         }
-        [HttpPut("/UpdateSaleOrder/{id}")]
+
+        [HttpPut("UpdateSaleOrder/{id}")]
         public IActionResult UpdateSaleOrder([FromRoute] int id, [FromBody] SaleOrderDto saleOrder)
         {
             var userId = GetUserId();
             if (userId == null) return Forbid();
-            var existingSaleOrders = _saleOrderService.GetSaleOrdersByClientId(saleOrder.ClientId);
-            var existingSaleOrder = existingSaleOrders.FirstOrDefault(so => so.Id == id);
+
+            var existingSaleOrder = _saleOrderService.GetSaleOrderById(id);
             if (existingSaleOrder == null)
+                return NotFound($"No se encontró una orden de venta con ID {id}");
+
+            // Validar permisos: Admin o dueño (cliente/vendedor)
+            if (!(IsUserInRole("Admin")
+                  || (IsUserInRole("Client") && userId == existingSaleOrder.ClientId)
+                  || (IsUserInRole("Seller") && userId == existingSaleOrder.SellerId)))
             {
-                return NotFound($"No se encontró una orden de venta con ID {id} para el cliente {saleOrder.ClientId}");
+                return BadRequest("El Id del cliente o vendedor no es válido.");
             }
-            if (IsUserInRole("Admin") || (IsUserInRole("Client") && userId == saleOrder.ClientId) || (IsUserInRole("Seller") && userId == saleOrder.SellerId))
-            {
-               var updated = _saleOrderService.UpdateSaleOrder(id, saleOrder);
-                if (!updated)
-                    return NotFound($"No se encontró una orden de venta con ID {id}");
-                return Ok("Sale order updated successfully.");
-            }
-            return BadRequest("El Id del cliente o vendedor no es valido.");
+
+            var updated = _saleOrderService.UpdateSaleOrder(id, saleOrder);
+            if (!updated)
+                return BadRequest("No se pudo actualizar la orden.");
+
+            return Ok("Sale order updated successfully.");
         }
         [HttpDelete("/DeleteSaleOrder/{id}")]
         public IActionResult DeleteSaleOrder([FromRoute] int id)

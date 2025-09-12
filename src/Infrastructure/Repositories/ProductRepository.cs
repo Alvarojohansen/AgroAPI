@@ -31,7 +31,8 @@ namespace Infrastructure.Repositories
         {
             _context.Products.Add(product);
             _context.SaveChanges();
-            return product;
+           
+            return product; 
         }
 
         public bool UpdateProduct(Product product)

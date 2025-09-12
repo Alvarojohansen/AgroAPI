@@ -53,11 +53,12 @@ builder.Services.AddDbContext<ApplicationContext>(dbContextOptions => dbContextO
 // DI de servicios
 builder.Services.Configure<AuthenticateServiceOptions>(
     builder.Configuration.GetSection(AuthenticateServiceOptions.AuthenticateService));
-
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddScoped<IProductService,ProductService>();
-builder.Services.AddScoped<SaleOrderService>();
+builder.Services.AddScoped<ISaleOrderService,SaleOrderService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISaleOrderRepository, SaleOrderRepository>();
@@ -88,6 +89,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 
 app.UseHttpsRedirection();
 

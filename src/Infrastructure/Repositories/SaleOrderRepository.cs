@@ -24,8 +24,28 @@ namespace Infrastructure.Repositories
         }
         public SaleOrder? GetSaleOrderById(int id)
         {
-            return _context.SaleOrders.Find(id);
+            return _context.SaleOrders
+                .Include(so => so.SaleOrderLines) // si querés traer las líneas también
+                .FirstOrDefault(so => so.Id == id);
         }
+        public List<SaleOrder> GetSaleOrderBySellerId(int sellerId)
+        {
+            return _context.SaleOrders
+                .Where(o => o.SellerId == sellerId)
+                .Include(o => o.SaleOrderLines) // opcional: incluir las líneas
+                .ThenInclude(l => l.Product)    // opcional: incluir productos
+                .ToList();
+        }
+
+        public List<SaleOrder> GetSaleOrderByClientId(int clientId)
+        {
+            return _context.SaleOrders
+                .Where(o => o.ClientId == clientId)
+                .Include(o => o.SaleOrderLines)
+                .ThenInclude(l => l.Product)
+                .ToList();
+        }
+
         public SaleOrder AddSaleOrder(SaleOrder saleOrder)
         {
             _context.SaleOrders.Add(saleOrder);

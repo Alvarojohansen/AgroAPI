@@ -9,11 +9,11 @@ namespace Application.Dtos.SaleOrder
 {
     public class SaleOrderDto
     {
-        public int SellerId { get; set; }
-        public ICollection<SaleOrderLineDto> SaleOrderLines { get; set; }
-        public decimal Total { get; set; }
+        public string OrderCode { get; set; }
         public int ClientId { get; set; }
-        public string OrderCode { get; internal set; }
-        public DateTime Date { get; internal set; }
+        public DateTime Date { get; set; }
+        public int SellerId { get; set; }
+        public ICollection<SaleOrderLineDto> SaleOrderLines { get; set; } = new List<SaleOrderLineDto>();
+        public decimal Total { get; set; }
     }
 }

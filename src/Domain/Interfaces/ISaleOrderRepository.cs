@@ -10,6 +10,8 @@ namespace Domain.Interfaces
     public interface ISaleOrderRepository
     {
         List<SaleOrder> GetSaleOrders();
+        List<SaleOrder> GetSaleOrderByClientId(int customerId);
+        List<SaleOrder> GetSaleOrderBySellerId(int sellerId);
         SaleOrder? GetSaleOrderById(int id);
         SaleOrder AddSaleOrder(SaleOrder saleOrder);
         bool UpdateSaleOrder(SaleOrder saleOrder);
