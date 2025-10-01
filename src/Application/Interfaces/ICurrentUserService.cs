@@ -10,6 +10,7 @@ namespace Application.Interfaces
     {
         int? SellerId { get; }
         string? Name { get; }
+        int? ClientId { get; }
 
     }
 }

@@ -50,8 +50,7 @@ namespace Application.Services
                 Category = request.Category,
                 Price = request.Price,
                 stock = request.Stock,
-                SellerId = sellerId    
-               
+                SellerId = sellerId
             };
            
             return _repository.AddProduct(product);
