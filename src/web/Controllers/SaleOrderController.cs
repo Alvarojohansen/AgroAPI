@@ -81,12 +81,12 @@ namespace web.Controllers
             return BadRequest("El Id del cliente no es valido.");
         }
 
-        [HttpPost("/AddSaleOrder")]
+        [HttpPost("AddSaleOrder/")]
         public IActionResult AddSaleOrder([FromBody] SaleOrderDto saleOrder)
         {
             if (saleOrder == null)
             {
-                return BadRequest("Sale order cannot be null");
+                return BadRequest("Sale order vacia.");
             }
 
             var userId = GetUserId();
@@ -99,7 +99,7 @@ namespace web.Controllers
                 return Ok(createdSaleOrder.Id);
             }
 
-            return BadRequest("CLientId invalid.");
+            return BadRequest("CLientId invalido, prueba ingresando otro.");
         }
 
         [HttpPut("UpdateSaleOrder/{id}")]
@@ -124,9 +124,9 @@ namespace web.Controllers
             if (!updated)
                 return BadRequest("No se pudo actualizar la orden.");
 
-            return Ok("Sale order updated successfully.");
+            return Ok("Sale order actualizada con exito.");
         }
-        [HttpDelete("/DeleteSaleOrder/{id}")]
+        [HttpDelete("DeleteSaleOrder/{id}")]
         public IActionResult DeleteSaleOrder([FromRoute] int id)
         {
             var userId = GetUserId();

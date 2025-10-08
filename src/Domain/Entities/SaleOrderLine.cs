@@ -15,8 +15,6 @@ namespace Domain.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int Quantity { get; set; }
-        public decimal? Total { get { return Product.Price * Quantity; } }
-
         [ForeignKey("Product")]
         public int ProductId { get; set; }
         public Product Product { get; set; } 
@@ -24,7 +22,6 @@ namespace Domain.Entities
         
         [ForeignKey("SaleOrder")]
         public int SaleOrderId { get; set; }
-        [JsonIgnore]
         public SaleOrder SaleOrder { get; set; }
 
     }

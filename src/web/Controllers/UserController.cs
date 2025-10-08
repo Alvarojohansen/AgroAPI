@@ -29,7 +29,7 @@ namespace web.Controllers
             return Ok(user);
         }
         [Authorize]
-        [HttpGet("{Id}")]
+        [HttpGet("user/{Id}")]
         public IActionResult Get( int Id)
         {
             return Ok(_service.Get(Id));
@@ -41,7 +41,7 @@ namespace web.Controllers
             
             if (body == null) 
             {
-                return BadRequest("User cannot be null");
+                return BadRequest("User vacio");
             }
             else 
             {
@@ -57,7 +57,7 @@ namespace web.Controllers
             var updated = _service.UpdateUser(id, user);
             if (!updated)
                 return NotFound($"No se encontró un usuario con ID {id}");
-            return Ok("User updated successfully.");
+            return Ok("Usuario actualizado con exito.");
 
         }
         [Authorize]
@@ -67,7 +67,7 @@ namespace web.Controllers
             var updated = _service.UpdateRoleUser(id, role);
             if (!updated)
                 return NotFound($"No se encontró un usuario con ID {id}");
-            return Ok("User role updated successfully.");
+            return Ok("Role actualizado con exito.");
         }
 
 
@@ -79,11 +79,11 @@ namespace web.Controllers
             var user = _service.Get(id);
             if (user == null) 
             {
-                return NotFound();
+                return NotFound("No se encontró un usuario con ese ID");
 
             }
             _service.DeleteUser(id);
-            return Ok();
+            return Ok("Usuario eliminado con exito.");
         }
 
         

@@ -32,7 +32,7 @@ namespace web.Controllers
                 return Ok(products);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("product/{id}")]
         public IActionResult GetById(int id)
         {
             return Ok(_productService.GetProductById(id));
@@ -45,12 +45,12 @@ namespace web.Controllers
             {
                 if (product == null)
                 {
-                    return BadRequest("Product cannot be null");
+                    return BadRequest("Product vacio");
                 }
                 return Ok(_productService.AddProduct(product));
             }
             
-            return Forbid();
+            return Forbid("No tienes permisos para agregar productos");
 
         }
 
@@ -66,7 +66,7 @@ namespace web.Controllers
 
                 return Ok(updated);
             }
-            return Forbid();
+            return Forbid("No tienes permisos para actualizar productos.");
         }
         
 
@@ -81,9 +81,9 @@ namespace web.Controllers
                     return NotFound($"No se encontró un producto con ID {id}");
                 }
                 _productService.DeleteProduct(id);
-                return Ok("Product deleted successfully.");
+                return Ok("Producto eliminado con exito.");
             }
-            return Forbid();
+            return Forbid("No tienes permisos para eliminar productos.");
         }
     }
 }
