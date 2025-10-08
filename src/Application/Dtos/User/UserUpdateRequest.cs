@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 namespace Application.Dtos.User
 {
     public class UserUpdateRequest
-
     {
         public string? Name { get; set; }
         [EmailAddress]

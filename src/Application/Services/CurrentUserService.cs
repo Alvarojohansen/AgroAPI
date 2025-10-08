@@ -55,5 +55,16 @@ namespace Application.Services
                 return claim.Value;
             }
         }
+        public int? ClientId
+        {
+            get
+            {
+                var claim = _httpContextAccessor.HttpContext?.User?.FindFirst("sub")
+                         ?? _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
+                if (claim != null && int.TryParse(claim.Value, out var id))
+                    return id;
+                return null;
+            }
+        }
     }
 }

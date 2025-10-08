@@ -52,7 +52,7 @@ namespace Infrastructure.Repositories
             if (user != null)
             {
                 _context.Users.Remove(user);    // Eliminar el objeto, no el ID
-                _context.SaveChanges();         // Guardar los cambios
+                _context.SaveChanges();// Guardar los cambios
             }
         }
        

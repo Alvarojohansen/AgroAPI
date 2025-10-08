@@ -10,7 +10,7 @@ namespace Application.Dtos.User
     public class UserRequest
 
     {
-        public int Id { get; set; }
+        
         public string? Name { get; set; }
         [EmailAddress]
         public string Email { get; set; }
