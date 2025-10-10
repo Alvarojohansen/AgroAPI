@@ -11,7 +11,5 @@ namespace Application.Interfaces
         int? SellerId { get; }
         int? ClientId { get; }
         string? Name { get; }
-        
-
     }
 }

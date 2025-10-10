@@ -24,7 +24,7 @@ namespace web.Controllers
             return roleClaim != null && roleClaim.Value == role; //Verificar si el claim existe y su valor es "role"
         }
         
-
+        [AllowAnonymous]
         [HttpGet]
         public IActionResult GetAll()
         {          
