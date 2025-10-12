@@ -24,13 +24,9 @@ namespace Domain.Entities
         [ForeignKey("SellerId")]
         public int SellerId { get; set; }
         public Seller Seller { get; set; }
-
         public ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
-
-        // Ahora el total se persiste
         public decimal Total { get; private set; }
-
-        // Método de dominio
+        // Método para recalcular el total de la orden
         public void RecalculateTotal()
         {
             Total = SaleOrderLines.Sum(l => l.UnitPrice * l.Quantity);
