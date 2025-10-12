@@ -14,11 +14,13 @@ namespace Application.Services
     {
         private readonly ISaleOrderRepository _repository;
         private readonly ICurrentUserService _currentUser;
+        private readonly IProductRepository _productRepository;
 
-        public SaleOrderService(ISaleOrderRepository repository, ICurrentUserService currentUser)
-        {            
+        public SaleOrderService(ISaleOrderRepository repository, ICurrentUserService currentUser, IProductRepository productRepository)
+        {
             _repository = repository;
             _currentUser = currentUser;
+            _productRepository = productRepository;
         }
         public List<SaleOrder> GetSaleOrders()
         {
@@ -40,26 +42,56 @@ namespace Application.Services
             return _repository.GetSaleOrderBySellerId(sellerId);
         }
 
-        public SaleOrder AddSaleOrder(SaleOrderDto saleOrder)
+        public SaleOrder AddSaleOrder(SaleOrderCreateDto saleOrder)
         {
             var clientId = _currentUser.ClientId
                 ?? throw new UnauthorizedAccessException("Usuario no autenticado");
 
+            // Generar código incremental
+            var lastOrder = _repository.GetLastOrder();
+            int nextNumber = 1;
+
+            if (lastOrder != null && !string.IsNullOrEmpty(lastOrder.OrderCode))
+            {
+                var parts = lastOrder.OrderCode.Split('-');
+                if (parts.Length > 1 && int.TryParse(parts[1], out int lastNumber))
+                {
+                    nextNumber = lastNumber + 1;
+                }
+            }
+
+            var newOrderCode = $"ORD-{nextNumber:D5}";
+
+            // Crear la orden
             var newSaleOrder = new SaleOrder
             {
-                OrderCode = saleOrder.OrderCode,
+                OrderCode = newOrderCode,
                 Date = DateTime.Now,
-                Total = saleOrder.Total,
                 ClientId = clientId,
                 SellerId = saleOrder.SellerId,
-                SaleOrderLines = saleOrder.SaleOrderLines
-                    .Select(lineDto => new SaleOrderLine
-                    {
-                        ProductId = lineDto.ProductId,
-                        Quantity = lineDto.Quantity
-                    }).ToList()
             };
 
+            // Agregar líneas
+            foreach (var lineDto in saleOrder.SaleOrderLines)
+            {
+                var product = _productRepository.GetProductById(lineDto.ProductId);
+                if (product == null)
+                    throw new Exception($"Producto con ID {lineDto.ProductId} no existe");
+
+                var line = new SaleOrderLine
+                {
+                    ProductId = product.Id,
+                    Quantity = lineDto.Quantity,
+                    UnitPrice = product.Price // guardamos el precio actual
+                };
+
+                newSaleOrder.SaleOrderLines.Add(line);
+            }
+
+            // Calcular total antes de guardar
+            newSaleOrder.RecalculateTotal();
+
+            // Persistir
             return _repository.AddSaleOrder(newSaleOrder);
         }
 
@@ -68,10 +100,9 @@ namespace Application.Services
             var existingSaleOrder = _repository.GetSaleOrderById(id);
             if (existingSaleOrder != null)
             {
-                existingSaleOrder.OrderCode = saleOrder.OrderCode;
+                
                 existingSaleOrder.SaleOrderLines = (ICollection<SaleOrderLine>)saleOrder.SaleOrderLines;
                 existingSaleOrder.Date = saleOrder.Date;
-                existingSaleOrder.Total = saleOrder.Total;
                 existingSaleOrder.ClientId = saleOrder.ClientId;
                 existingSaleOrder.SellerId = saleOrder.SellerId;
                

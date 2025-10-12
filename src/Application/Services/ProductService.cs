@@ -49,7 +49,7 @@ namespace Application.Services
                 Description = request.Description,
                 Category = request.Category,
                 Price = request.Price,
-                stock = request.Stock,
+                Stock = request.Stock,
                 SellerId = sellerId
             };
            
@@ -65,7 +65,7 @@ namespace Application.Services
                 product.Description = request.Description;
                 product.Category = request.Category;
                 product.Price = request.Price;
-                product.stock = request.stock;
+                product.Stock = request.Stock;
 
                 _repository.UpdateProduct(product);
                 return true;

@@ -44,6 +44,7 @@ namespace web.Controllers
             var saleOrders = _saleOrderService.GetSaleOrders();
             return Ok(saleOrders);
         }
+
         [HttpGet("GetSaleOrder/{id}")]
         public IActionResult GetSaleOrderById([FromRoute] int id)
         {
@@ -82,7 +83,7 @@ namespace web.Controllers
         }
 
         [HttpPost("AddSaleOrder/")]
-        public IActionResult AddSaleOrder([FromBody] SaleOrderDto saleOrder)
+        public IActionResult AddSaleOrder([FromBody] SaleOrderCreateDto saleOrder)
         {
             if (saleOrder == null)
             {

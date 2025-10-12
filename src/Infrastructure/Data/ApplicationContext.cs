@@ -61,6 +61,7 @@ namespace Infrastructure.Data
                 .HasMany(u => u.Products)
                 .WithOne(p => p.Seller)
                 .HasForeignKey(f => f.SellerId);
+            
         }
     }
 }

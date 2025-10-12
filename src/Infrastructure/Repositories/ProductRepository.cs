@@ -49,7 +49,7 @@ namespace Infrastructure.Repositories
             exitingProduct.Description = product.Description;
             exitingProduct.Category = product.Category;
             exitingProduct.Price = product.Price;
-            exitingProduct.stock = product.stock;
+            exitingProduct.Stock = product.Stock;
 
             _context.Entry(exitingProduct).State = EntityState.Modified;
             _context.SaveChanges();

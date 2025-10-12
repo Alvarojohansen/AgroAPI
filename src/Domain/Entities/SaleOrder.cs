@@ -13,9 +13,9 @@ namespace Domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string OrderCode { get; set; } 
+
+        public string OrderCode { get; set; }
         public DateTime Date { get; set; } = DateTime.Now;
-        public decimal Total { get; set; }
 
         [ForeignKey("ClientId")]
         public int ClientId { get; set; }
@@ -26,5 +26,14 @@ namespace Domain.Entities
         public Seller Seller { get; set; }
 
         public ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+
+        // Ahora el total se persiste
+        public decimal Total { get; private set; }
+
+        // Método de dominio
+        public void RecalculateTotal()
+        {
+            Total = SaleOrderLines.Sum(l => l.UnitPrice * l.Quantity);
+        }
     }
 }

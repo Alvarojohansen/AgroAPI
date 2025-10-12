@@ -69,5 +69,13 @@ namespace Infrastructure.Repositories
             }
         }
 
+        public SaleOrder? GetLastOrder()
+        {
+            return _context.SaleOrders
+                .OrderByDescending(o => o.Id)
+                .FirstOrDefault();
+        }
+
+
     }
 }

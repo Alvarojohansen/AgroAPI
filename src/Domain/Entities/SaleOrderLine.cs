@@ -9,20 +9,25 @@ using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
-    public  class SaleOrderLine
+    public class SaleOrderLine
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
         public int Quantity { get; set; }
+
         [ForeignKey("Product")]
         public int ProductId { get; set; }
-        public Product Product { get; set; } 
-        
-        
+        public Product Product { get; set; }
+
+        public decimal UnitPrice { get; set; }
+
+        [NotMapped]
+        public decimal LineTotal => UnitPrice * Quantity;
+
         [ForeignKey("SaleOrder")]
         public int SaleOrderId { get; set; }
         public SaleOrder SaleOrder { get; set; }
-
     }
 }

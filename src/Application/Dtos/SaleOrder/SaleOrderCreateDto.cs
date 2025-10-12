@@ -7,14 +7,10 @@ using System.Threading.Tasks;
 
 namespace Application.Dtos.SaleOrder
 {
-    public class SaleOrderDto
+    public class SaleOrderCreateDto
     {
-        public int Id { get; set; }
-        public string OrderCode { get; set; }
-        public DateTime Date { get; set; }
         public int ClientId { get; set; }
         public int SellerId { get; set; }
-        public decimal Total { get; set; }
         public ICollection<SaleOrderLineDto> SaleOrderLines { get; set; } = new List<SaleOrderLineDto>();
     }
 }

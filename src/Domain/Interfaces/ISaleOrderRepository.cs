@@ -16,5 +16,6 @@ namespace Domain.Interfaces
         SaleOrder AddSaleOrder(SaleOrder saleOrder);
         bool UpdateSaleOrder(SaleOrder saleOrder);
         void DeleteSaleOrder(int id);
+        SaleOrder? GetLastOrder();
     }
 }
