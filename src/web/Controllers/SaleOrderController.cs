@@ -97,7 +97,7 @@ namespace web.Controllers
             {
                 var createdSaleOrder = _saleOrderService.AddSaleOrder(saleOrder);
                 
-                return Ok(createdSaleOrder.Id);
+                return Ok(createdSaleOrder.OrderCode);
             }
 
             return BadRequest("CLientId invalido, prueba ingresando otro.");

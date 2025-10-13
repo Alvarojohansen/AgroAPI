@@ -47,7 +47,8 @@ namespace web.Controllers
                 {
                     return BadRequest("Product vacio");
                 }
-                return Ok(_productService.AddProduct(product));
+                var newProduct = _productService.AddProduct(product);
+                return Ok(newProduct.Name);
             }
             
             return Forbid("No tienes permisos para agregar productos");

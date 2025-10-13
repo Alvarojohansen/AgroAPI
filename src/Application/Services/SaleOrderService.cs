@@ -1,6 +1,7 @@
 ﻿using Application.Dtos.SaleOrder;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enum;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -67,6 +68,7 @@ namespace Application.Services
             {
                 OrderCode = newOrderCode,
                 Date = DateTime.Now,
+                OrderStatus = StatusOrderEnum.Pending,
                 ClientId = clientId,
                 SellerId = saleOrder.SellerId,
             };
@@ -82,7 +84,7 @@ namespace Application.Services
                 {
                     ProductId = product.Id,
                     Quantity = lineDto.Quantity,
-                    UnitPrice = product.Price // guardamos el precio actual
+                    UnitPrice = product.Price 
                 };
 
                 newSaleOrder.SaleOrderLines.Add(line);
@@ -90,8 +92,6 @@ namespace Application.Services
 
             // Calcular total antes de guardar
             newSaleOrder.RecalculateTotal();
-
-            // Persistir
             return _repository.AddSaleOrder(newSaleOrder);
         }
 

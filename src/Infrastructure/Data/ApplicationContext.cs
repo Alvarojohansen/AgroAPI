@@ -38,6 +38,10 @@ namespace Infrastructure.Data
                 .Entity<Product>()
                 .Property(p => p.Category)
                 .HasConversion(new EnumToStringConverter<CategoryEnum>());
+            modelBuilder
+                .Entity<SaleOrder>()
+                .Property(so => so.OrderStatus)
+                .HasConversion(new EnumToStringConverter<StatusOrderEnum>());
 
             // Relación entre Cliente y OrdenDeVenta (uno a muchos)
             modelBuilder.Entity<User>()

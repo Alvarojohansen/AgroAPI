@@ -1,20 +1,21 @@
 ﻿using Application.Dtos.SaleOrderLine;
+using Domain.Enum;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Application.Dtos.SaleOrder
 {
     public class SaleOrderDto
     {
-        public int Id { get; set; }
-        public string OrderCode { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        public StatusOrderEnum Status { get; set; }
         public DateTime Date { get; set; }
         public int ClientId { get; set; }
         public int SellerId { get; set; }
-        public decimal Total { get; set; }
         public ICollection<SaleOrderLineDto> SaleOrderLines { get; set; } = new List<SaleOrderLineDto>();
     }
 }
