@@ -41,8 +41,8 @@ namespace Application.Services
             // Obtengo el ID del vendedor desde el servicio de usuario actual
             var sellerId = _currentUser.SellerId
                            ?? throw new UnauthorizedAccessException("Usuario no autenticado");
-            var Name = _currentUser.Name
-                           ?? throw new UnauthorizedAccessException("Usuario no autenticado");
+           if(request == null)
+                throw new AppValidationException("La información del producto no puede ser nula.");
 
             var product = new Product
             {
@@ -62,12 +62,12 @@ namespace Application.Services
             if (request == null)
                 throw new AppValidationException("La información del producto no puede ser nula.");
 
-            // Obtenemos el producto existente
+           
             var existingProduct = _repository.GetProductById(id);
             if (existingProduct == null)
-                throw new AppValidationException($"No se encontró el producto con ID.");
+                throw new AppValidationException("No se encontró el producto con ID.");
 
-            // Creamos una nueva instancia del producto actualizada
+            // mapeamos producto existente con los nuevos datos
             var updatedProduct = new Product
             {
                 Id = existingProduct.Id,
@@ -78,7 +78,7 @@ namespace Application.Services
                 Stock = request.Stock
             };
 
-            // Intentamos actualizar mediante el repositorio
+            
             var result = _repository.UpdateProduct(updatedProduct);
 
             if (!result)
@@ -89,12 +89,12 @@ namespace Application.Services
         public bool DeleteProduct(int id)
         {
             var product = _repository.GetProductById(id);
-            if (product != null)
-            {
-                _repository.DeleteProduct(product.Id);
-                return true;
-            }
-            return false;
+            if (product == null)
+                throw new AppValidationException("No se encontro un producto con ese ID");
+
+            _repository.DeleteProduct(id);
+            return true;
+
         }
     }   
 }

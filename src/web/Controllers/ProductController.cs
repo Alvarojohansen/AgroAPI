@@ -51,7 +51,7 @@ namespace web.Controllers
                 return Ok(newProduct.Name);
             }
             
-            return Forbid("No tienes permisos para agregar productos");
+            return Unauthorized("No tienes permisos para agregar productos");
 
         }
 
@@ -83,7 +83,7 @@ namespace web.Controllers
                 _productService.DeleteProduct(id);
                 return Ok("Producto eliminado con exito.");
             }
-            return Forbid("No tienes permisos para eliminar productos.");
+            return Unauthorized("No tienes permisos para eliminar productos.");
         }
     }
 }
