@@ -24,6 +24,7 @@ namespace Domain.Entities
         public CategoryEnum Category { get; set; }
         public decimal Price { get; set; }
         public int Stock { get; set; }
+
         [ForeignKey("Seller")]
         public int SellerId { get; set; }
         public Seller Seller { get; set; }

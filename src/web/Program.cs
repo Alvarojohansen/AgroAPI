@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using web.Middlewares;
 using static Application.Services.ThirdsServices.AuthenticationService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -62,6 +63,7 @@ builder.Services.AddScoped<ISaleOrderService,SaleOrderService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ISaleOrderRepository, SaleOrderRepository>();
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
 
 // JWT
@@ -95,6 +97,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication(); // ¡antes de authorization!
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

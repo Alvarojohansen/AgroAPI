@@ -38,23 +38,19 @@ namespace Infrastructure.Repositories
         public bool UpdateProduct(Product product)
         {
             if (product == null)
-            {
-                return false;
-            }
-            var exitingProduct = _context.Products.Find(product.Id);
-            if (exitingProduct == null)
                 return false;
 
-            exitingProduct.Name = product.Name;
-            exitingProduct.Description = product.Description;
-            exitingProduct.Category = product.Category;
-            exitingProduct.Price = product.Price;
-            exitingProduct.Stock = product.Stock;
+            var existingProduct = _context.Products.Find(product.Id);
+            if (existingProduct == null)
+                return false;
 
-            _context.Entry(exitingProduct).State = EntityState.Modified;
-            _context.SaveChanges();
-            return true;
+            existingProduct.Name = product.Name;
+            existingProduct.Description = product.Description;
+            existingProduct.Category = product.Category;
+            existingProduct.Price = product.Price;
+            existingProduct.Stock = product.Stock;
 
+            return _context.SaveChanges() > 0;
         }
 
         public bool DeleteProduct(int id)

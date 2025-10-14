@@ -55,21 +55,20 @@ namespace web.Controllers
 
         }
 
+
         [HttpPut("updateProduct/{id}")]
         public IActionResult UpdateProduct([FromRoute] int id, [FromBody] ProductUpdateRequest product)
         {
-            if (IsUserInRole("Admin") || (IsUserInRole("Seller")))
-            {
-                var updated = _productService.UpdateProduct(id, product);
+            if (!IsUserInRole("Admin") && !IsUserInRole("Seller"))
+                return Unauthorized("No tienes permisos para actualizar productos.");
 
-                if (!updated)
-                    return NotFound($"No se encontró un producto con ID {id}");
+            if (product == null)
+                return BadRequest("Los datos del producto no pueden ser nulos.");
 
-                return Ok(updated);
-            }
-            return Forbid("No tienes permisos para actualizar productos.");
+            _productService.UpdateProduct(id, product);
+            return Ok(new { message = "Producto actualizado correctamente." });
         }
-        
+
 
         [HttpDelete("deleteProduct/{id}")]
         public IActionResult DeleteProduct([FromRoute] int id)

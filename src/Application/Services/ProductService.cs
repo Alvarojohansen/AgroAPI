@@ -3,6 +3,7 @@ using Application.Dtos.User;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enum;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -58,20 +59,32 @@ namespace Application.Services
         }
         public bool UpdateProduct(int id, ProductUpdateRequest request)
         {
-            var product = _repository.GetProductById(id);
-            if (product != null)
+            if (request == null)
+                throw new AppValidationException("La información del producto no puede ser nula.");
+
+            // Obtenemos el producto existente
+            var existingProduct = _repository.GetProductById(id);
+            if (existingProduct == null)
+                throw new AppValidationException($"No se encontró el producto con ID.");
+
+            // Creamos una nueva instancia del producto actualizada
+            var updatedProduct = new Product
             {
-                product.Name = request.Name;
-                product.Description = request.Description;
-                product.Category = request.Category;
-                product.Price = request.Price;
-                product.Stock = request.Stock;
+                Id = existingProduct.Id,
+                Name = request.Name,
+                Description = request.Description,
+                Category = request.Category,
+                Price = request.Price,
+                Stock = request.Stock
+            };
 
-                _repository.UpdateProduct(product);
-                return true;
-            }
-            return false;
+            // Intentamos actualizar mediante el repositorio
+            var result = _repository.UpdateProduct(updatedProduct);
 
+            if (!result)
+                throw new AppValidationException("No se pudo actualizar el producto. Intente nuevamente.");
+
+            return true;
         }
         public bool DeleteProduct(int id)
         {

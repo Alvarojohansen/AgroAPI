@@ -1,21 +1,22 @@
 ﻿using Domain.Enum;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+
 
 namespace Application.Dtos.Product
 {
     public class ProductUpdateRequest
     {
         public string Name { get; set; }
+
         public string? Description { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
+        [Required]
         public CategoryEnum Category { get; set; }
-        public decimal Price { get; set; }
+
+        [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que 0.")]
+        public decimal Price { get; set; }        
 
         public int Stock { get; set; }
     }

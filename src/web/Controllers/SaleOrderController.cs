@@ -127,6 +127,8 @@ namespace web.Controllers
 
             return Ok("Sale order actualizada con exito.");
         }
+
+
         [HttpDelete("DeleteSaleOrder/{id}")]
         public IActionResult DeleteSaleOrder([FromRoute] int id)
         {
