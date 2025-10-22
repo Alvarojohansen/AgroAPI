@@ -77,12 +77,12 @@ Capa que expone la API mediante **Controllers**:
 
 ## 🚀 Ejecución del proyecto
 
-### 1️⃣ Clonar el repositorio
+1️⃣ Clonar el repositorio
 ```bash
 git clone https://github.com/Alvarojohansen/AgroAPI.git
 cd AgroAPI/src/web
 
-### 2️⃣ Configurar la base de datos
+2️⃣ Configurar la base de datos
 
 Editar el archivo appsettings.json con tu cadena de conexión.
 
