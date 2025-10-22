@@ -1,6 +1,6 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Authorize;
+using Application.Interfaces;
 using Application.Services;
-using Application.Services.ThirdsServices;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;

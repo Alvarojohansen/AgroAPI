@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace Domain.Entities
 {
     public class Client : User
-    {
-        
-        public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
+    {  
+        public int? PurchasesCount { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using Application.Dtos;
+﻿using Application.Dtos.Authorize;
 using Application.Dtos.User;
 using Application.Interfaces;
 using Domain.Entities;
@@ -19,9 +19,11 @@ namespace Application.Services
     public class UserService : IUserService
     {
         private readonly IUserRepository _repository;
-        public UserService(IUserRepository repository)
+        private readonly IPasswordHasher _passwordHasher;
+        public UserService(IUserRepository repository,IPasswordHasher passwordHasher)
         {
             _repository = repository;
+            _passwordHasher = passwordHasher;
         }
 
 
@@ -64,13 +66,16 @@ namespace Application.Services
 
         public int AddUser(UserRequest request)
         {
+            var hashedPassword = _passwordHasher.Hash(request.Password);
             var user = new User()
             {
                 Name =request.Name,
                 Email =request.Email,
-                Password =request.Password,
+                Password =hashedPassword,// Hasheo antes de guardarla
                 Address =request.Address,
+                Apartment =request.Apartment,
                 City = request.City,
+                Province =request.Province,
                 Country =request.Country,
                 Phone =request.Phone,
                 Role = UserRole.Client
@@ -98,7 +103,9 @@ namespace Application.Services
                 userUpdate.Email = request.Email;
                 userUpdate.Password = request.Password;
                 userUpdate.Address = request.Address;
+                userUpdate.Apartment = request.Apartment;
                 userUpdate.City = request.City;
+                userUpdate.Province = request.Province;                
                 userUpdate.Country = request.Country;
                 userUpdate.Phone = request.Phone;
 

@@ -32,7 +32,7 @@ namespace Domain.Entities
         [ForeignKey("SellerId")]
         public int SellerId { get; set; }
         public Seller Seller { get; set; }
-        public ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
+        public ICollection<SaleOrderLine> SaleOrderLines { get; set; }
         
         // Método para recalcular el total de la orden
         public void RecalculateTotal()

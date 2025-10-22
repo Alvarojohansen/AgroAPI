@@ -28,6 +28,6 @@ namespace Domain.Entities
 
         [ForeignKey("SaleOrder")]
         public int SaleOrderId { get; set; }
-        public SaleOrder SaleOrder { get; set; }
+       
     }
 }

@@ -2,6 +2,7 @@
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Enum;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -78,7 +79,7 @@ namespace Application.Services
             {
                 var product = _productRepository.GetProductById(lineDto.ProductId);
                 if (product == null)
-                    throw new Exception($"Producto con ID {lineDto.ProductId} no existe");
+                    throw new AppValidationException($"Producto con ese ID no existe, intenta con otro");
 
                 var line = new SaleOrderLine
                 {
@@ -100,25 +101,32 @@ namespace Application.Services
             var existingSaleOrder = _repository.GetSaleOrderById(id);
             if (existingSaleOrder != null)
             {
-                
-                existingSaleOrder.SaleOrderLines = (ICollection<SaleOrderLine>)saleOrder.SaleOrderLines;
                 existingSaleOrder.Date = saleOrder.Date;
                 existingSaleOrder.ClientId = saleOrder.ClientId;
                 existingSaleOrder.SellerId = saleOrder.SellerId;
-               
+                existingSaleOrder.OrderStatus = saleOrder.Status;
+
+                // Mapeo correcto de DTO → Entidad
+                existingSaleOrder.SaleOrderLines = saleOrder.SaleOrderLines
+                    .Select(lineDto => new SaleOrderLine
+                    {
+                        ProductId = lineDto.ProductId,
+                        Quantity = lineDto.Quantity,
+                        // Si tu entidad SaleOrderLine tiene SaleOrderId o Id, no los pongas aquí,
+                        // EF se encarga de relacionarlos al guardar.
+                    })
+                    .ToList();
+
                 _repository.UpdateSaleOrder(existingSaleOrder);
                 return true;
             }
-                return false;
+
+            return false;
         }
         public void DeleteSaleOrder(int id)
         {
             _repository.DeleteSaleOrder(id);
         }
 
-        public bool UpdateSaleOrder(int id, SaleOrder saleOrder)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

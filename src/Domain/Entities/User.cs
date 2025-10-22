@@ -16,19 +16,20 @@ namespace Domain.Entities
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;    
+        public string Name { get; set; } = string.Empty;
+        [Required]
         public string Password { get; set; }
         [EmailAddress]
         public string Email { get; set; }
         public string? Address { get; set; }
         public string? Apartment { get; set; }
+        public string? Province { get; set; }
         public string? Country { get; set; }
         public string? City { get; set; }
         public string? Phone { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public UserRole Role { get; set; }
-
         public ICollection<SaleOrder> SaleOrders { get; set; } = new List<SaleOrder>();
     }
 }

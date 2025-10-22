@@ -8,6 +8,7 @@ namespace web.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserService _service;
@@ -15,26 +16,26 @@ namespace web.Controllers
         {
             _service = service;
         }
-        [Authorize]
+        
         [HttpGet]
         public IActionResult GetAllUser() 
         {
             return Ok(_service.GetAllUser());
         }
-        [Authorize]
+        
         [HttpGet("{email}")]
         public IActionResult GetByEmail(string email)
         {
             var user = _service.GetUserbyEmail(email);
             return Ok(user);
         }
-        [Authorize]
+        
         [HttpGet("user/{Id}")]
         public IActionResult Get( int Id)
         {
             return Ok(_service.Get(Id));
         }
-
+        [AllowAnonymous]
         [HttpPost("postUser/")]
         public IActionResult AddNewUser([FromBody] UserRequest body) 
         {
@@ -50,7 +51,7 @@ namespace web.Controllers
             }
                 
         }
-        [Authorize]
+        
         [HttpPut("updateUser/{id}")]
         public IActionResult UpdateUser([FromRoute]int id, [FromBody] UserUpdateRequest user) 
         {
@@ -60,7 +61,7 @@ namespace web.Controllers
             return Ok("Usuario actualizado con exito.");
 
         }
-        [Authorize]
+       
         [HttpPut("updateRoleUser/{id}")]
         public IActionResult UpdateRoleUser([FromRoute] int id, [FromBody] UserUpdateRoleRequest role)
         {
@@ -71,8 +72,6 @@ namespace web.Controllers
         }
 
 
-
-        [Authorize]
         [HttpDelete("deleteUser/{id}")]
         public IActionResult DeleteUser([FromRoute] int id) 
         {

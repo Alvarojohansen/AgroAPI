@@ -13,9 +13,10 @@ namespace Infrastructure.Data
     public class ApplicationContext : DbContext
     {
         public DbSet<Product> Products { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; }       
         public DbSet<SaleOrder> SaleOrders  { get; set; }
         public DbSet<SaleOrderLine> SaleOrderLines { get; set; }
+        
 
         //Acá estamos llamando al constructor de DbContext que es el que acepta las opciones
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
@@ -52,7 +53,7 @@ namespace Infrastructure.Data
             // Relación entre OrdenDeVenta y LineaDeVenta (uno a muchos)
             modelBuilder.Entity<SaleOrder>()
                 .HasMany(o => o.SaleOrderLines)
-                .WithOne(l => l.SaleOrder)
+                .WithOne()
                 .HasForeignKey(l => l.SaleOrderId);
 
             modelBuilder.Entity<SaleOrderLine>()

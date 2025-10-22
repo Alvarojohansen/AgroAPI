@@ -1,5 +1,4 @@
-﻿using Application.Dtos;
-using Domain.Interfaces;
+﻿using Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
+using Application.Interfaces;
+using Application.Dtos.Authorize;
 
 
 namespace Application.Services.ThirdsServices
@@ -21,11 +22,13 @@ namespace Application.Services.ThirdsServices
     {
         
         private readonly IUserRepository _userRepository;
+        private readonly IPasswordHasher _passwordHasher;
         private readonly AuthenticateServiceOptions _options;
 
-        public AuthenticationService(IUserRepository userRepository, IOptions<AuthenticateServiceOptions> options)
+        public AuthenticationService(IUserRepository userRepository,IPasswordHasher passwordHasher, IOptions<AuthenticateServiceOptions> options)
         {
             _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
             _options = options.Value;
         }
 
@@ -38,9 +41,10 @@ namespace Application.Services.ThirdsServices
 
             if (user == null) return null;
 
-            if (user.Password == credentialsRequest.Password) return user;
+            bool validPassword = _passwordHasher.Verify(credentialsRequest.Password, user.Password);
+            if (!validPassword) return null;
 
-            return null;
+            return user;
         }
 
        
