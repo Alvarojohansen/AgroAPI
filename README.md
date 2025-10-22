@@ -8,7 +8,7 @@ Su propósito es ofrecer una API modular y escalable para la gestión de usuario
 - **.NET 8 Web API**
 - **Entity Framework Core**
 - **JWT Authentication**
-- **SQL Server / SQLite (según configuración)**
+- ** SQLite**
 - **Clean Architecture**
 - **Dependency Injection**
 - **Data Annotations y DTOs**
