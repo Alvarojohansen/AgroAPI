@@ -3,29 +3,6 @@
 **AgroAPI** es una aplicación web desarrollada con **.NET 8**, **Entity Framework Core** y una **arquitectura Clean (Clean Architecture)**.  
 Su propósito es ofrecer una API modular y escalable para la gestión de usuarios, productos y órdenes de venta dentro de un entorno agroindustrial.
 
----
-
-## 🏗️ Arquitectura
-
-El proyecto sigue los principios de **Clean Architecture**, dividiendo el código en capas bien definidas:
-
-src/
-├── Application/ # Lógica de negocio y casos de uso
-│ ├── Interfaces/ # Definición de contratos (servicios y repositorios)
-│ └── Services/ # Implementación de los casos de uso
-│
-├── Domain/ # Entidades del dominio y repositorios base
-│ └── Interfaces/ # Contratos que deben implementar las capas inferiores
-│
-├── Infrastructure/ # Implementación de persistencia y servicios externos
-│ ├── Repositories/ # Acceso a datos mediante Entity Framework Core
-│ └── Services/ # Autenticación, JWT, y utilidades
-│
-└── web/ # Capa de presentación (API controllers)
-└── Controllers/ # Endpoints de la API
-
----
-
 ## ⚙️ Tecnologías utilizadas
 
 - **.NET 8 Web API**
@@ -75,10 +52,11 @@ Capa que expone la API mediante **Controllers**:
 
 ---
 
-## 🚀 Ejecución del proyecto
+### 🚀 Ejecución del proyecto
 
+```
 1️⃣ Clonar el repositorio
-```bash
+bash
 git clone https://github.com/Alvarojohansen/AgroAPI.git
 cd AgroAPI/src/web
 
@@ -93,6 +71,8 @@ dotnet ef database update
 4️⃣ Ejecutar la API
 
 dotnet run
+```
+### 🧩 Endpoint principales
 
 | Método | Endpoint             | Descripción                                  |
 | :----- | :------------------- | :------------------------------------------- |
