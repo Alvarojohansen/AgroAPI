@@ -46,6 +46,7 @@ namespace Infrastructure.Repositories
 
             existingProduct.Name = product.Name;
             existingProduct.Description = product.Description;
+            existingProduct.ImageUrl = product.ImageUrl;
             existingProduct.Category = product.Category;
             existingProduct.Price = product.Price;
             existingProduct.Stock = product.Stock;

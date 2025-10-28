@@ -49,6 +49,7 @@ namespace Application.Services
                 Name = request.Name,
                 Description = request.Description,
                 Category = request.Category,
+                ImageUrl = request.ImageUrl,
                 Price = request.Price,
                 Stock = request.Stock,
                 SellerId = sellerId
@@ -73,6 +74,7 @@ namespace Application.Services
                 Id = existingProduct.Id,
                 Name = request.Name,
                 Description = request.Description,
+                ImageUrl = request.ImageUrl,
                 Category = request.Category,
                 Price = request.Price,
                 Stock = request.Stock

@@ -1,6 +1,7 @@
 ﻿using Domain.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+
 using System.Text.Json;
 
 namespace web.Middlewares
@@ -37,6 +38,28 @@ namespace web.Middlewares
                 string json = JsonSerializer.Serialize(problem);
 
                 context.Response.ContentType = "application/json";
+                context.Response.StatusCode = statusCode;
+
+                await context.Response.WriteAsync(json);
+            }
+            catch (NotFoundException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                int statusCode = (int)HttpStatusCode.BadRequest;
+
+                ProblemDetails problem = new()
+                {
+                    Status = statusCode,
+                    Type = "https://bankaccountapi/errors/notfoundexception",
+                    Title = "NotFoundException",
+                    Detail = ex.Message
+                };
+
+                string json = JsonSerializer.Serialize(problem);
+
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = statusCode;
 
                 await context.Response.WriteAsync(json);
             }

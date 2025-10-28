@@ -71,7 +71,7 @@ namespace Application.Services
             {
                 Name =request.Name,
                 Email =request.Email,
-                Password =hashedPassword,// Hasheo antes de guardarla
+                Password =hashedPassword,
                 Address =request.Address,
                 Apartment =request.Apartment,
                 City = request.City,

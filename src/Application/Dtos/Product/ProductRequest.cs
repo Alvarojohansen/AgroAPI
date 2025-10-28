@@ -12,6 +12,7 @@ namespace Application.Dtos.Product
     {
         public string Name { get; set; }
         public string? Description { get; set; }
+        public string? ImageUrl { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public CategoryEnum Category { get; set; }
