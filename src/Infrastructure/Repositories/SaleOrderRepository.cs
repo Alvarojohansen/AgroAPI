@@ -58,6 +58,10 @@ namespace Infrastructure.Repositories
             _context.SaveChanges();
             return true;
         }
+        public bool UpdateSaleOrderStatus()
+        {
+            return true;
+        }
         public void DeleteSaleOrder(int id) 
         {
             var saleOrder =  _context.SaleOrders.Find(id);

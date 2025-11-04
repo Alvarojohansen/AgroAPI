@@ -18,8 +18,8 @@ namespace Application.Dtos.Product
         public CategoryEnum Category { get; set; }
 
         [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor que 0.")]
-        public decimal Price { get; set; }        
-
+        public decimal Price { get; set; }
+        [Range(1, double.MaxValue, ErrorMessage = "El stock debe ser mayor que 0.")]
         public int Stock { get; set; }
     }
 }

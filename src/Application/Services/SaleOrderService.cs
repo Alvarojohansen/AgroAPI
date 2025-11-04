@@ -18,36 +18,35 @@ namespace Application.Services
         private readonly ICurrentUserService _currentUser;
         private readonly IProductRepository _productRepository;
 
-        public SaleOrderService(ISaleOrderRepository repository, ICurrentUserService currentUser, IProductRepository productRepository)
+        public SaleOrderService(ISaleOrderRepository repository,
+                                ICurrentUserService currentUser,
+                                IProductRepository productRepository)
         {
             _repository = repository;
             _currentUser = currentUser;
             _productRepository = productRepository;
         }
-        public List<SaleOrder> GetSaleOrders()
-        {
-            return _repository.GetSaleOrders();
-        }
-        public SaleOrder? GetSaleOrderById(int id)
-        {
-            return _repository.GetSaleOrderById(id);
-        }
+
+        public List<SaleOrder> GetSaleOrders() => _repository.GetSaleOrders();
+
+        public SaleOrder? GetSaleOrderById(int id) => _repository.GetSaleOrderById(id);
 
         public List<SaleOrder> GetSaleOrdersByClientId(int clientId)
-        {
-            
-            return _repository.GetSaleOrderByClientId(clientId);
-        }
+            => _repository.GetSaleOrderByClientId(clientId);
+
         public List<SaleOrder> GetSaleOrdersBySellerId(int sellerId)
-        {
-           
-            return _repository.GetSaleOrderBySellerId(sellerId);
-        }
+            => _repository.GetSaleOrderBySellerId(sellerId);
 
         public SaleOrder AddSaleOrder(SaleOrderCreateDto saleOrder)
         {
+            if (saleOrder == null)
+                throw new AppValidationException("Los datos de la orden no pueden ser nulos.");
+
             var clientId = _currentUser.ClientId
-                ?? throw new UnauthorizedAccessException("Usuario no autenticado");
+                ?? throw new UnauthorizedAccessException("Usuario no autenticado.");
+
+            if (saleOrder.SaleOrderLines == null || saleOrder.SaleOrderLines.Count == 0)
+                throw new AppValidationException("La orden debe contener al menos un producto.");
 
             // Generar código incremental
             var lastOrder = _repository.GetLastOrder();
@@ -57,76 +56,149 @@ namespace Application.Services
             {
                 var parts = lastOrder.OrderCode.Split('-');
                 if (parts.Length > 1 && int.TryParse(parts[1], out int lastNumber))
-                {
                     nextNumber = lastNumber + 1;
-                }
             }
 
             var newOrderCode = $"ORD-{nextNumber:D5}";
 
-            // Crear la orden
-            var newSaleOrder = new SaleOrder
+            // Crear la orden con el constructor de dominio 
+            var newSaleOrder = new SaleOrder(clientId, saleOrder.SellerId, StatusOrderEnum.Pending)
             {
-                OrderCode = newOrderCode,
-                Date = DateTime.Now,
-                OrderStatus = StatusOrderEnum.Pending,
-                ClientId = clientId,
-                SellerId = saleOrder.SellerId,
+                OrderCode = newOrderCode
             };
 
-            // Agregar líneas
+            // Agregar líneas usando la lógica de la entidad
             foreach (var lineDto in saleOrder.SaleOrderLines)
             {
-                var product = _productRepository.GetProductById(lineDto.ProductId);
-                if (product == null)
-                    throw new AppValidationException($"Producto con ese ID no existe, intenta con otro");
+                var product = _productRepository.GetProductById(lineDto.ProductId)
+                    ?? throw new NotFoundException($"Producto con ID {lineDto.ProductId} no existe.");
 
-                var line = new SaleOrderLine
-                {
-                    ProductId = product.Id,
-                    Quantity = lineDto.Quantity,
-                    UnitPrice = product.Price 
-                };
+                newSaleOrder.AddLine(product, lineDto.Quantity);
 
-                newSaleOrder.SaleOrderLines.Add(line);
+                // 🔹 Actualizar el stock en la base
+                _productRepository.UpdateProduct(product);
             }
 
-            // Calcular total antes de guardar
-            newSaleOrder.RecalculateTotal();
+            // Ya se recalcula solo al agregar líneas
             return _repository.AddSaleOrder(newSaleOrder);
         }
 
         public bool UpdateSaleOrder(int id, SaleOrderDto saleOrder)
         {
-            var existingSaleOrder = _repository.GetSaleOrderById(id);
-            if (existingSaleOrder != null)
+            var existingSaleOrder = _repository.GetSaleOrderById(id)
+                ?? throw new NotFoundException($"No se encontró la orden con ID {id}.");
+
+            if (existingSaleOrder.OrderStatus != StatusOrderEnum.Pending)
+                throw new AppValidationException("Solo se pueden modificar órdenes pendientes.");
+
+            // 🔹 1. Devolver stock anterior
+            foreach (var oldLine in existingSaleOrder.SaleOrderLines)
             {
-                existingSaleOrder.Date = saleOrder.Date;
-                existingSaleOrder.ClientId = saleOrder.ClientId;
-                existingSaleOrder.SellerId = saleOrder.SellerId;
-                existingSaleOrder.OrderStatus = saleOrder.Status;
-
-                // Mapeo correcto de DTO → Entidad
-                existingSaleOrder.SaleOrderLines = saleOrder.SaleOrderLines
-                    .Select(lineDto => new SaleOrderLine
-                    {
-                        ProductId = lineDto.ProductId,
-                        Quantity = lineDto.Quantity,
-                        // Si tu entidad SaleOrderLine tiene SaleOrderId o Id, no los pongas aquí,
-                        // EF se encarga de relacionarlos al guardar.
-                    })
-                    .ToList();
-
-                _repository.UpdateSaleOrder(existingSaleOrder);
-                return true;
+                var oldProduct = _productRepository.GetProductById(oldLine.ProductId);
+                if (oldProduct != null)
+                {
+                    oldProduct.Stock += oldLine.Quantity;
+                    _productRepository.UpdateProduct(oldProduct);
+                }
             }
 
-            return false;
+            // 🔹 2. Limpiar líneas anteriores
+            existingSaleOrder.SaleOrderLines.Clear();
+
+            // 🔹 3. Agregar nuevas líneas y actualizar stock
+            foreach (var lineDto in saleOrder.SaleOrderLines)
+            {
+                var product = _productRepository.GetProductById(lineDto.ProductId)
+                    ?? throw new NotFoundException($"Producto con ID {lineDto.ProductId} no existe.");
+
+                existingSaleOrder.AddLine(product, lineDto.Quantity);
+                _productRepository.UpdateProduct(product);
+            }
+
+            // 🔹 4. Actualizar campos básicos
+            existingSaleOrder.Date = saleOrder.Date;
+            existingSaleOrder.ChangeStatus(saleOrder.Status);
+
+            _repository.UpdateSaleOrder(existingSaleOrder);
+            return true;
         }
+
+        public bool UpdateSaleOrderStatus(int id, SaleOrderStateUpdateDto status)
+        {
+            var existingSaleOrder = _repository.GetSaleOrderById(id)
+                ?? throw new NotFoundException($"No se encontró la orden con ID {id}.");
+
+            existingSaleOrder.ChangeStatus(status.OrderStatus);
+            _repository.UpdateSaleOrder(existingSaleOrder);
+            return true;
+        }
+
         public void DeleteSaleOrder(int id)
         {
             _repository.DeleteSaleOrder(id);
         }
+        // Método para eliminar un producto de una orden
+        public bool RemoveProductFromOrder(int orderId, int productId)
+        {
+            var existingSaleOrder = _repository.GetSaleOrderById(orderId)
+                ?? throw new NotFoundException($"No se encontró la orden con ID {orderId}.");
 
+            if (existingSaleOrder.OrderStatus != StatusOrderEnum.Pending)
+                throw new AppValidationException("Solo se pueden modificar órdenes pendientes.");
+
+            var product = _productRepository.GetProductById(productId)
+                ?? throw new NotFoundException($"No se encontró el producto con ID {productId}.");
+
+            // Usa el nuevo método que recibe el producto
+            existingSaleOrder.RemoveLine(product);
+
+            // Actualiza el stock del producto en la base
+            _productRepository.UpdateProduct(product);
+
+            // Persiste la orden actualizada
+            _repository.UpdateSaleOrder(existingSaleOrder);
+
+            return true;
+        }
+
+        public bool CancelSaleOrder(int id)
+        {
+            var existingSaleOrder = _repository.GetSaleOrderById(id)
+                ?? throw new NotFoundException($"No se encontró la orden con ID {id}.");
+
+            if (existingSaleOrder.OrderStatus == StatusOrderEnum.Completed)
+                throw new AppValidationException("No se puede cancelar una orden completada.");
+
+            if (existingSaleOrder.OrderStatus == StatusOrderEnum.Cancelled)
+                throw new AppValidationException("La orden ya está cancelada.");
+
+            // 🔹 Devolver stock de cada producto
+            foreach (var line in existingSaleOrder.SaleOrderLines)
+            {
+                var product = _productRepository.GetProductById(line.ProductId);
+                if (product != null)
+                {
+                    product.Stock += line.Quantity;
+                    _productRepository.UpdateProduct(product);
+                }
+            }
+
+            // 🔹 Cambiar el estado desde la entidad
+            existingSaleOrder.ChangeStatus(StatusOrderEnum.Cancelled);
+
+            _repository.UpdateSaleOrder(existingSaleOrder);
+
+            return true;
+        }
+        public bool CompleteSaleOrder(int id)
+        {
+            var existingSaleOrder = _repository.GetSaleOrderById(id)
+                ?? throw new NotFoundException($"No se encontró la orden con ID {id}.");
+
+            existingSaleOrder.Complete(); //aplica las reglas del dominio
+            _repository.UpdateSaleOrder(existingSaleOrder);
+
+            return true;
+        }
     }
 }

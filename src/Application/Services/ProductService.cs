@@ -64,9 +64,7 @@ namespace Application.Services
                 throw new AppValidationException("La información del producto no puede ser nula.");
 
            
-            var existingProduct = _repository.GetProductById(id);
-            if (existingProduct == null)
-                throw new AppValidationException("No se encontró el producto con ID.");
+            var existingProduct = _repository.GetProductById(id) ?? throw new NotFoundException($"No se encontró el producto con ID {id}.");
 
             // mapeamos producto existente con los nuevos datos
             var updatedProduct = new Product

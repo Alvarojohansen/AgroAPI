@@ -30,7 +30,7 @@ namespace web.Middlewares
                 ProblemDetails problem = new()
                 {
                     Status = statusCode,
-                    Type = "https://bankaccountapi/errors/appvalidation",
+                    Type = "https://AgroAPI/errors/appvalidation",
                     Title = "Validation error",
                     Detail = ex.Message
                 };
@@ -46,13 +46,13 @@ namespace web.Middlewares
             {
                 _logger.LogError(ex, ex.Message);
 
-                int statusCode = (int)HttpStatusCode.BadRequest;
+                int statusCode = (int)HttpStatusCode.NotFound;
 
                 ProblemDetails problem = new()
                 {
                     Status = statusCode,
-                    Type = "https://bankaccountapi/errors/notfoundexception",
-                    Title = "NotFoundException",
+                    Type = "https://AgroAPI/errors/notfoundexception",
+                    Title = "Resource not found",
                     Detail = ex.Message
                 };
 

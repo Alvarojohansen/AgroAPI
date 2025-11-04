@@ -12,7 +12,6 @@ namespace Domain.Enum
     {
         Agroquimico,
         Servicio,
-        Apesticidas,
         Semillas,
         Herramientas,
 
