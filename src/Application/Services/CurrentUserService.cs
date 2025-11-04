@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.Enum;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -55,6 +56,16 @@ namespace Application.Services
                 return claim.Value;
             }
         }
-        
+        public UserRole Role
+        {
+            get
+            {
+               var claim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.Role);
+                if (claim == null) return UserRole.Client; // Valor por defecto
+
+                return Enum.Parse<UserRole>(claim.Value);
+            }
+        }
+
     }
 }

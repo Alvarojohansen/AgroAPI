@@ -97,7 +97,7 @@ namespace Application.Services
                 var oldProduct = _productRepository.GetProductById(oldLine.ProductId);
                 if (oldProduct != null)
                 {
-                    oldProduct.Stock += oldLine.Quantity;
+                    oldProduct.IncreaseStock(oldLine.Quantity);
                     _productRepository.UpdateProduct(oldProduct);
                 }
             }
@@ -178,7 +178,7 @@ namespace Application.Services
                 var product = _productRepository.GetProductById(line.ProductId);
                 if (product != null)
                 {
-                    product.Stock += line.Quantity;
+                    product.IncreaseStock(line.Quantity); 
                     _productRepository.UpdateProduct(product);
                 }
             }

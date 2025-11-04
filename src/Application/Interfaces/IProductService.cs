@@ -15,5 +15,7 @@ namespace Application.Interfaces
         Product AddProduct(ProductRequest request);
         bool UpdateProduct(int id, ProductUpdateRequest request);
         bool DeleteProduct(int id);
+        void UpdateProductPrice(int id, ProductPriceUpdateDto dto);
+        void UpdateProductStock(int id, ProductStockUpdateDto dto);
     }
 }

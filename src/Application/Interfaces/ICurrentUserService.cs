@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enum;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,6 @@ namespace Application.Interfaces
         int? SellerId { get; }
         int? ClientId { get; }
         string? Name { get; }
+        UserRole Role { get; }
     }
 }

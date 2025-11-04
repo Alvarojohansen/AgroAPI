@@ -68,6 +68,19 @@ namespace web.Controllers
             _productService.UpdateProduct(id, product);
             return Ok(new { message = "Producto actualizado correctamente." });
         }
+        [HttpPatch("{id}/stock")]
+        public IActionResult UpdateStock([FromRoute] int id, [FromBody] ProductStockUpdateDto dto)
+        {
+            _productService.UpdateProductStock(id, dto);
+            return Ok("Stock actualizado correctamente.");
+        }
+
+        [HttpPatch("{id}/price")]
+        public IActionResult UpdatePrice([FromRoute] int id, [FromBody] ProductPriceUpdateDto dto)
+        {
+            _productService.UpdateProductPrice(id, dto);
+            return Ok("Precio actualizado correctamente.");
+        }
 
 
         [HttpDelete("deleteProduct/{id}")]

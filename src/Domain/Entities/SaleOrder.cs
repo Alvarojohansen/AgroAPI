@@ -98,8 +98,8 @@ namespace Domain.Entities
                 });
             }
 
-            // 🔹 Resta el stock del producto
-            product.Stock -= quantity;
+            
+            product.DecreaseStock(quantity);
 
             RecalculateTotal();
         }
@@ -109,12 +109,11 @@ namespace Domain.Entities
             if (OrderStatus != StatusOrderEnum.Pending)
                 throw new AppValidationException("Solo se pueden eliminar líneas de órdenes pendientes.");
 
-            var line = SaleOrderLines.FirstOrDefault(l => l.ProductId == product.Id);
-            if (line == null)
-                throw new AppValidationException("El producto no existe en la orden.");
+            var line = SaleOrderLines.FirstOrDefault(l => l.ProductId == product.Id) ?? throw new AppValidationException("El producto no existe en la orden.");
 
-            // 🔹 Devuelve el stock al producto
-            product.Stock += line.Quantity;
+            
+            product.IncreaseStock(line.Quantity);
+
 
             SaleOrderLines.Remove(line);
             RecalculateTotal();
