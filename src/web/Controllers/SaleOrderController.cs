@@ -33,14 +33,14 @@ namespace web.Controllers
             return int.TryParse(userIdClaim.Value, out var userId) ? userId : null;
         }
 
-        // 🔹 GET: Todas las órdenes
+        
         [HttpGet]
         public IActionResult GetAll()
         {
             return Ok(_saleOrderService.GetSaleOrders());
         }
 
-        // 🔹 GET: Orden por ID
+        
         [HttpGet("{id}")]
         public IActionResult GetSaleOrderById([FromRoute] int id)
         {
@@ -51,7 +51,7 @@ namespace web.Controllers
             return Ok(saleOrder);
         }
 
-        // 🔹 GET: Órdenes por cliente
+       
         [HttpGet("client/{clientId}")]
         public IActionResult GetAllByClientId([FromRoute] int clientId)
         {
@@ -64,7 +64,7 @@ namespace web.Controllers
             return BadRequest("El Id del cliente no es válido.");
         }
 
-        // 🔹 GET: Órdenes por vendedor
+        
         [HttpGet("seller/{sellerId}")]
         public IActionResult GetAllBySellerId([FromRoute] int sellerId)
         {
@@ -77,7 +77,7 @@ namespace web.Controllers
             return BadRequest("El Id del vendedor no es válido.");
         }
 
-        // 🔹 POST: Crear nueva orden
+       
         [HttpPost]
         public IActionResult AddSaleOrder([FromBody] SaleOrderCreateDto saleOrder)
         {
@@ -95,7 +95,7 @@ namespace web.Controllers
             return BadRequest("ClientId inválido, prueba ingresando otro.");
         }
 
-        // 🔹 PUT: Actualizar orden completa
+        
         [HttpPut("{id}")]
         public IActionResult UpdateSaleOrder([FromRoute] int id, [FromBody] SaleOrderDto saleOrder)
         {
@@ -118,7 +118,7 @@ namespace web.Controllers
             return Ok("Orden actualizada con éxito.");
         }
 
-        // 🔹 PATCH: Actualizar solo el estado
+        
         [HttpPatch("{id}/state")]
         public IActionResult UpdateState([FromRoute] int id, [FromBody] SaleOrderStateUpdateDto saleOrderState)
         {
@@ -136,7 +136,7 @@ namespace web.Controllers
             return Ok("Estado actualizado correctamente.");
         }
 
-        // 🔹 PATCH: Completar orden
+        
         [HttpPatch("{id}/complete")]
         public IActionResult CompleteSaleOrder([FromRoute] int id)
         {
@@ -147,7 +147,7 @@ namespace web.Controllers
             return Ok("Orden completada con éxito.");
         }
 
-        // 🔹 PATCH: Cancelar orden
+        
         [HttpPatch("{id}/cancel")]
         public IActionResult CancelSaleOrder([FromRoute] int id)
         {
@@ -158,7 +158,7 @@ namespace web.Controllers
             return Ok("Orden cancelada con éxito.");
         }
 
-        // 🔹 DELETE: Eliminar orden
+        
         [HttpDelete("{id}")]
         public IActionResult DeleteSaleOrder([FromRoute] int id)
         {
@@ -180,7 +180,7 @@ namespace web.Controllers
             return BadRequest("No tienes permisos para eliminar esta orden.");
         }
 
-        // 🔹 PATCH: Eliminar un producto dentro de una orden (solo cliente)
+        
         [HttpPatch("{orderId}/products/{productId}")]
         public IActionResult RemoveProductFromOrder([FromRoute] int orderId, [FromRoute] int productId)
         {

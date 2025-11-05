@@ -4,9 +4,7 @@ using Domain.Entities;
 using Domain.Enum;
 using Domain.Exceptions;
 using Domain.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Application.Services
 {
@@ -21,22 +19,17 @@ namespace Application.Services
             _currentUser = currentUser;
         }
 
-        // 🔹 Obtener todos los productos
-        public List<Product> GetAllProducts()
-        {
-            return _repository.GetAllProducts();
-        }
+       
+        public List<Product> GetAllProducts() => _repository.GetAllProducts();
 
-        // 🔹 Obtener producto por ID
+      
         public Product GetProductById(int id)
         {
-            var product = _repository.GetProductById(id)
+            return _repository.GetProductById(id)
                 ?? throw new NotFoundException($"No se encontró el producto con ID {id}.");
-
-            return product;
         }
 
-        // 🔹 Agregar nuevo producto (solo Seller o Admin)
+        
         public Product AddProduct(ProductRequest request)
         {
             if (request == null)
@@ -48,56 +41,58 @@ namespace Application.Services
             if (_currentUser.Role != UserRole.Seller && _currentUser.Role != UserRole.Admin)
                 throw new AppValidationException("Solo un vendedor o administrador puede crear productos.");
 
-            var product = new Product
-            {
-                Name = request.Name,
-                Description = request.Description,
-                Category = request.Category,
-                ImageUrl = request.ImageUrl,
-                Price = request.Price,
-                Stock = request.Stock,
-                SellerId = sellerId
-            };
+            
+            var product = new Product(
+                request.Name,
+                request.Description,
+                request.ImageUrl,
+                request.Category,
+                request.Price,
+                request.Stock,
+                sellerId
+            );
 
             return _repository.AddProduct(product);
         }
 
-        // 🔹 Actualizar producto (solo Seller propietario o Admin)
+       
         public bool UpdateProduct(int id, ProductUpdateRequest request)
         {
-            if (request == null)
-                throw new AppValidationException("La información del producto no puede ser nula.");
-
-            var existingProduct = _repository.GetProductById(id)
+            var product = _repository.GetProductById(id)
                 ?? throw new NotFoundException($"No se encontró el producto con ID {id}.");
 
             if (_currentUser.Role == UserRole.Client)
                 throw new AppValidationException("Los clientes no pueden modificar productos.");
 
-            if (_currentUser.Role == UserRole.Seller && existingProduct.SellerId != _currentUser.SellerId)
+            if (_currentUser.Role == UserRole.Seller && product.SellerId != _currentUser.SellerId)
                 throw new UnauthorizedAccessException("No puedes modificar un producto que no te pertenece.");
 
-            // 🔹 Usar métodos de dominio
-            existingProduct.UpdatePrice(request.Price);
+            
+            product.UpdatePrice(request.Price);
 
-            if (request.Stock > existingProduct.Stock)
-                existingProduct.IncreaseStock(request.Stock - existingProduct.Stock);
-            else if (request.Stock < existingProduct.Stock)
-                existingProduct.DecreaseStock(existingProduct.Stock - request.Stock);
+            if (request.Stock > product.Stock)
+                product.IncreaseStock(request.Stock - product.Stock);
+            else if (request.Stock < product.Stock)
+                product.DecreaseStock(product.Stock - request.Stock);
 
-            existingProduct.Name = request.Name;
-            existingProduct.Description = request.Description;
-            existingProduct.ImageUrl = request.ImageUrl;
-            existingProduct.Category = request.Category;
+            //Actualizar campos editables
+            typeof(Product)
+                .GetProperty("Name")?.SetValue(product, request.Name);
+            typeof(Product)
+                .GetProperty("Description")?.SetValue(product, request.Description);
+            typeof(Product)
+                .GetProperty("ImageUrl")?.SetValue(product, request.ImageUrl);
+            typeof(Product)
+                .GetProperty("Category")?.SetValue(product, request.Category);
 
-            _repository.UpdateProduct(existingProduct);
+            _repository.UpdateProduct(product);
             return true;
         }
-        //Actualizar Campos específicos del producto (solo Seller propietario o Admin)
+
+
         public void UpdateProductStock(int id, ProductStockUpdateDto dto)
         {
-            var product = _repository.GetProductById(id)
-                ?? throw new NotFoundException($"No se encontró el producto con ID {id}.");
+            var product = GetProductById(id);
 
             if (_currentUser.Role == UserRole.Client)
                 throw new UnauthorizedAccessException("Los clientes no pueden modificar el stock.");
@@ -105,9 +100,7 @@ namespace Application.Services
             if (_currentUser.Role == UserRole.Seller && product.SellerId != _currentUser.SellerId)
                 throw new UnauthorizedAccessException("No puedes modificar un producto que no te pertenece.");
 
-            // 🔹 Calcular la diferencia
             var difference = dto.Stock - product.Stock;
-
             if (difference == 0)
                 throw new AppValidationException("El nuevo stock es igual al actual.");
 
@@ -117,36 +110,32 @@ namespace Application.Services
                 product.DecreaseStock(-difference);
 
             _repository.UpdateProduct(product);
-            return;
         }
 
+        
         public void UpdateProductPrice(int id, ProductPriceUpdateDto dto)
         {
-            var product = _repository.GetProductById(id)
-                ?? throw new NotFoundException($"No se encontró el producto con ID {id}.");
+            var product = GetProductById(id);
 
             if (_currentUser.Role == UserRole.Client)
-                throw new AppValidationException("Los clientes no pueden modificar el precio.");
+                throw new UnauthorizedAccessException("Los clientes no pueden modificar el precio.");
 
             if (_currentUser.Role == UserRole.Seller && product.SellerId != _currentUser.SellerId)
                 throw new UnauthorizedAccessException("No puedes modificar un producto que no te pertenece.");
 
             product.UpdatePrice(dto.Price);
-
             _repository.UpdateProduct(product);
-            return ;
         }
 
-        // 🔹 Eliminar producto (solo Seller propietario o Admin)
+     
         public bool DeleteProduct(int id)
         {
-            var existingProduct = _repository.GetProductById(id)
-                ?? throw new NotFoundException($"No se encontró el producto con ID {id}.");
+            var product = GetProductById(id);
 
             if (_currentUser.Role == UserRole.Client)
                 throw new AppValidationException("Los clientes no pueden eliminar productos.");
 
-            if (_currentUser.Role == UserRole.Seller && existingProduct.SellerId != _currentUser.SellerId)
+            if (_currentUser.Role == UserRole.Seller && product.SellerId != _currentUser.SellerId)
                 throw new UnauthorizedAccessException("No puedes eliminar un producto que no te pertenece.");
 
             _repository.DeleteProduct(id);

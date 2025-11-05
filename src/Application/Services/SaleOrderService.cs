@@ -61,13 +61,13 @@ namespace Application.Services
 
             var newOrderCode = $"ORD-{nextNumber:D5}";
 
-            // Crear la orden con el constructor de dominio 
+            
             var newSaleOrder = new SaleOrder(clientId, saleOrder.SellerId, StatusOrderEnum.Pending)
             {
                 OrderCode = newOrderCode
             };
 
-            // Agregar líneas usando la lógica de la entidad
+            
             foreach (var lineDto in saleOrder.SaleOrderLines)
             {
                 var product = _productRepository.GetProductById(lineDto.ProductId)
@@ -75,11 +75,11 @@ namespace Application.Services
 
                 newSaleOrder.AddLine(product, lineDto.Quantity);
 
-                // 🔹 Actualizar el stock en la base
+                
                 _productRepository.UpdateProduct(product);
             }
 
-            // Ya se recalcula solo al agregar líneas
+            
             return _repository.AddSaleOrder(newSaleOrder);
         }
 
@@ -91,7 +91,7 @@ namespace Application.Services
             if (existingSaleOrder.OrderStatus != StatusOrderEnum.Pending)
                 throw new AppValidationException("Solo se pueden modificar órdenes pendientes.");
 
-            // 🔹 1. Devolver stock anterior
+            
             foreach (var oldLine in existingSaleOrder.SaleOrderLines)
             {
                 var oldProduct = _productRepository.GetProductById(oldLine.ProductId);
@@ -102,10 +102,10 @@ namespace Application.Services
                 }
             }
 
-            // 🔹 2. Limpiar líneas anteriores
+            
             existingSaleOrder.SaleOrderLines.Clear();
 
-            // 🔹 3. Agregar nuevas líneas y actualizar stock
+            
             foreach (var lineDto in saleOrder.SaleOrderLines)
             {
                 var product = _productRepository.GetProductById(lineDto.ProductId)
@@ -115,7 +115,7 @@ namespace Application.Services
                 _productRepository.UpdateProduct(product);
             }
 
-            // 🔹 4. Actualizar campos básicos
+            
             existingSaleOrder.Date = saleOrder.Date;
             existingSaleOrder.ChangeStatus(saleOrder.Status);
 
@@ -148,14 +148,9 @@ namespace Application.Services
 
             var product = _productRepository.GetProductById(productId)
                 ?? throw new NotFoundException($"No se encontró el producto con ID {productId}.");
-
-            // Usa el nuevo método que recibe el producto
-            existingSaleOrder.RemoveLine(product);
-
-            // Actualiza el stock del producto en la base
-            _productRepository.UpdateProduct(product);
-
-            // Persiste la orden actualizada
+            
+            existingSaleOrder.RemoveLine(product);          
+            _productRepository.UpdateProduct(product);           
             _repository.UpdateSaleOrder(existingSaleOrder);
 
             return true;
@@ -172,7 +167,7 @@ namespace Application.Services
             if (existingSaleOrder.OrderStatus == StatusOrderEnum.Cancelled)
                 throw new AppValidationException("La orden ya está cancelada.");
 
-            // 🔹 Devolver stock de cada producto
+            
             foreach (var line in existingSaleOrder.SaleOrderLines)
             {
                 var product = _productRepository.GetProductById(line.ProductId);
@@ -183,7 +178,7 @@ namespace Application.Services
                 }
             }
 
-            // 🔹 Cambiar el estado desde la entidad
+            
             existingSaleOrder.ChangeStatus(StatusOrderEnum.Cancelled);
 
             _repository.UpdateSaleOrder(existingSaleOrder);
@@ -195,7 +190,7 @@ namespace Application.Services
             var existingSaleOrder = _repository.GetSaleOrderById(id)
                 ?? throw new NotFoundException($"No se encontró la orden con ID {id}.");
 
-            existingSaleOrder.Complete(); //aplica las reglas del dominio
+            existingSaleOrder.Complete(); 
             _repository.UpdateSaleOrder(existingSaleOrder);
 
             return true;

@@ -1,13 +1,8 @@
 ﻿using Domain.Enum;
 using Domain.Exceptions;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace Domain.Entities
 {
@@ -35,7 +30,7 @@ namespace Domain.Entities
         public Seller Seller { get; set; }
         public ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
-        // Constructor protegido para EF
+        // Constructor protegido 
         protected SaleOrder() { }
 
         // Constructor de dominio
