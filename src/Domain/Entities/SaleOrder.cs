@@ -30,7 +30,7 @@ namespace Domain.Entities
         public Seller Seller { get; set; }
         public ICollection<SaleOrderLine> SaleOrderLines { get; set; } = new List<SaleOrderLine>();
 
-        // Constructor protegido 
+        // Constructor protegido (EF)
         protected SaleOrder() { }
 
         // Constructor de dominio

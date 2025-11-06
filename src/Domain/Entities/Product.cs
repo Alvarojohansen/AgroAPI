@@ -32,7 +32,7 @@ namespace Domain.Entities
         public int SellerId { get; set; }
         public Seller Seller { get; set; }
 
-        //Constructor vacío 
+        //Constructor vacío (EF)
         protected Product() { }
 
         //Constructor de dominio
