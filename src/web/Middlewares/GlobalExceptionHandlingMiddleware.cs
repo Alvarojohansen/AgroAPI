@@ -63,6 +63,27 @@ namespace web.Middlewares
 
                 await context.Response.WriteAsync(json);
             }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+
+                int statusCode = (int)HttpStatusCode.Unauthorized;
+
+                ProblemDetails problem = new()
+                {
+                    Status = statusCode,
+                    Type = "https://AgroAPI/errors/unauthorized",
+                    Title = "Unauthorized access",
+                    Detail = ex.Message
+                };
+
+                string json = JsonSerializer.Serialize(problem);
+
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = statusCode;
+
+                await context.Response.WriteAsync(json);
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);

@@ -9,5 +9,10 @@ namespace Domain.Entities
     public class Client : User
     {  
         public int? PurchasesCount { get; set; }
+
+        public void IncrementPurchases()
+        {
+            PurchasesCount++;
+        }
     }
 }
