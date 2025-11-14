@@ -76,14 +76,10 @@ namespace Application.Services
                 product.DecreaseStock(product.Stock - request.Stock);
 
             //Actualizar campos editables
-            typeof(Product)
-                .GetProperty("Name")?.SetValue(product, request.Name);
-            typeof(Product)
-                .GetProperty("Description")?.SetValue(product, request.Description);
-            typeof(Product)
-                .GetProperty("ImageUrl")?.SetValue(product, request.ImageUrl);
-            typeof(Product)
-                .GetProperty("Category")?.SetValue(product, request.Category);
+            product.Name = request.Name;
+            product.Description = request.Description;
+            product.ImageUrl = request.ImageUrl;
+            product.Category = request.Category;
 
             _repository.UpdateProduct(product);
             return true;
