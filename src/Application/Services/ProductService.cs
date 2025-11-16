@@ -67,7 +67,7 @@ namespace Application.Services
             if (_currentUser.Role == UserRole.Seller && product.SellerId != _currentUser.SellerId)
                 throw new UnauthorizedAccessException("No puedes modificar un producto que no te pertenece.");
 
-            
+
             product.UpdatePrice(request.Price);
 
             if (request.Stock > product.Stock)

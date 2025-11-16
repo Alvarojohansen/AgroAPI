@@ -20,6 +20,7 @@ namespace Domain.Entities
         [Required]
         public string Password { get; set; }
         [EmailAddress]
+        [Required]
         public string Email { get; set; }
         public string? Address { get; set; }
         public string? Apartment { get; set; }

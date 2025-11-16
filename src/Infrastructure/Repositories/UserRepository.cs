@@ -48,11 +48,11 @@ namespace Infrastructure.Repositories
 
         public void DeleteUser(int Id) 
         {
-            var user = _context.Users.Find(Id); // Buscar el usuario por su ID
+            var user = _context.Users.Find(Id);
             if (user != null)
             {
-                _context.Users.Remove(user);    // Eliminar el objeto, no el ID
-                _context.SaveChanges();// Guardar los cambios
+                _context.Users.Remove(user); 
+                _context.SaveChanges();
             }
         }
        

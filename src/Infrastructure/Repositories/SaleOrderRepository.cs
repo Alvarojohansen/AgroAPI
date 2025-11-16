@@ -25,15 +25,15 @@ namespace Infrastructure.Repositories
         public SaleOrder? GetSaleOrderById(int id)
         {
             return _context.SaleOrders
-                .Include(so => so.SaleOrderLines) // si querés traer las líneas también
+                .Include(so => so.SaleOrderLines) 
                 .FirstOrDefault(so => so.Id == id);
         }
         public List<SaleOrder> GetSaleOrderBySellerId(int sellerId)
         {
             return _context.SaleOrders
                 .Where(o => o.SellerId == sellerId)
-                .Include(o => o.SaleOrderLines) // opcional: incluir las líneas
-                .ThenInclude(l => l.Product)    // opcional: incluir productos
+                .Include(o => o.SaleOrderLines) 
+                .ThenInclude(l => l.Product)    
                 .ToList();
         }
 
@@ -58,10 +58,7 @@ namespace Infrastructure.Repositories
             _context.SaveChanges();
             return true;
         }
-        public bool UpdateSaleOrderStatus()
-        {
-            return true;
-        }
+        
         public void DeleteSaleOrder(int id) 
         {
             var saleOrder =  _context.SaleOrders.Find(id);
